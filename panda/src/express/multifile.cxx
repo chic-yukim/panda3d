@@ -26,6 +26,8 @@
 #include <iterator>
 #include <time.h>
 
+#include "openSSLWrapper.h"
+
 // This sequence of bytes begins each Multifile to identify it as a Multifile.
 const char Multifile::_header[] = "pmf\0\n\r";
 const size_t Multifile::_header_size = 6;
@@ -765,43 +767,6 @@ add_signature(const Filename &composite, const string &password) {
   EVP_PKEY_free(evp_pkey);
 
   return result;
-}
-#endif  // HAVE_OPENSSL
-
-#ifdef HAVE_OPENSSL
-/**
- * Adds a new signature to the Multifile.  This signature associates the
- * indicated certificate with the current contents of the Multifile.  When the
- * Multifile is read later, the signature will still be present only if the
- * Multifile is unchanged; any subsequent changes to the Multifile will
- * automatically invalidate and remove the signature.
- *
- * If chain is non-NULL, it represents the certificate chain that validates
- * the certificate.
- *
- * The specified private key must match the certificate, and the Multifile
- * must be open in read-write mode.  The private key is only used for
- * generating the signature; it is not written to the Multifile and cannot be
- * retrieved from the Multifile later.  (However, the certificate *can* be
- * retrieved from the Multifile later, to identify the entity that created the
- * signature.)
- *
- * This implicitly causes a repack() operation if one is needed.  Returns true
- * on success, false on failure.
- */
-bool Multifile::
-add_signature(X509 *certificate, STACK_OF(X509) *chain, EVP_PKEY *pkey) {
-  // Convert the certificate and chain into our own CertChain structure.
-  CertChain cert_chain;
-  cert_chain.push_back(CertRecord(certificate));
-  if (chain != NULL) {
-    int num = sk_X509_num(chain);
-    for (int i = 0; i < num; ++i) {
-      cert_chain.push_back(CertRecord((X509 *)sk_X509_value(chain, i)));
-    }
-  }
-
-  return add_signature(cert_chain, pkey);
 }
 #endif  // HAVE_OPENSSL
 
@@ -2478,12 +2443,7 @@ check_signatures() {
     }
 
     if (pkey != NULL) {
-      EVP_MD_CTX *md_ctx;
-#ifdef SSL_097
-      md_ctx = EVP_MD_CTX_create();
-#else
-      md_ctx = new EVP_MD_CTX;
-#endif
+      EVP_MD_CTX *md_ctx = EVP_MD_CTX_create();
       EVP_VerifyInit(md_ctx, EVP_sha1());
 
       nassertv(_read != NULL);
@@ -2764,12 +2724,7 @@ write_data(ostream &write, istream *read, streampos fpos,
       // And we also need to have a private key.
       nassertr(_pkey != NULL, fpos);
 
-      EVP_MD_CTX *md_ctx;
-#ifdef SSL_097
-      md_ctx = EVP_MD_CTX_create();
-#else
-      md_ctx = new EVP_MD_CTX;
-#endif
+      EVP_MD_CTX *md_ctx = EVP_MD_CTX_create();
       EVP_SignInit(md_ctx, EVP_sha1());
 
       // Read and hash the multifile contents, but only up till
@@ -2807,11 +2762,7 @@ write_data(ostream &write, istream *read, streampos fpos,
 
       delete[] sig_data;
 
-#ifdef SSL_097
       EVP_MD_CTX_destroy(md_ctx);
-#else
-      delete md_ctx;
-#endif
     }
 #endif  // HAVE_OPENSSL
 

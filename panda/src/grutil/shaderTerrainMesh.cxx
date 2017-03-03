@@ -528,13 +528,13 @@ void ShaderTerrainMesh::add_for_draw(CullTraverser *trav, CullTraverserData &dat
   state = state->set_attrib(current_shader_attrib, 10000);
 
   // Emit chunk
-  CullableObject *object = new CullableObject(_chunk_geom, state, modelview_transform);
+  CullableObject *object = new CullableObject(_chunk_geom, move(state), move(modelview_transform));
   trav->get_cull_handler()->record_object(object, trav);
 
   // After rendering, increment the view index
   ++_current_view_index;
 
-  if (_current_view_index > stm_max_views) {
+  if (_current_view_index > (size_t)stm_max_views) {
     shader_terrain_cat.error() << "More views than supported! Increase the stm-max-views config variable!" << endl;
   }
 

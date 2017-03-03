@@ -1142,7 +1142,6 @@ generate_quads(GeomNode *geom_node, const QuadMap &quad_map) {
     } else {
       tris->set_index_type(GeomEnums::NT_uint16);
     }
-    PT(GeomVertexArrayData) indices = tris->modify_vertices();
 
     int i = 0;
 
@@ -1150,9 +1149,10 @@ generate_quads(GeomNode *geom_node, const QuadMap &quad_map) {
     // bottleneck.  So, I've written this out the hard way instead.  Two
     // versions of the loop: one for 32-bit indices, one for 16-bit.
     {
-      PT(GeomVertexArrayDataHandle) vtx_handle = vdata->modify_array(0)->modify_handle();
+      PT(GeomVertexArrayDataHandle) vtx_handle = vdata->modify_array_handle(0);
       vtx_handle->unclean_set_num_rows(quads.size() * 4);
 
+      Thread *current_thread = Thread::get_current_thread();
       unsigned char *write_ptr = vtx_handle->get_write_pointer();
       size_t stride = format->get_array(0)->get_stride() / sizeof(PN_float32);
 
@@ -1163,7 +1163,7 @@ generate_quads(GeomNode *geom_node, const QuadMap &quad_map) {
 
       if (tris->get_index_type() == GeomEnums::NT_uint32) {
         // 32-bit index case.
-        PT(GeomVertexArrayDataHandle) idx_handle = indices->modify_handle();
+        PT(GeomVertexArrayDataHandle) idx_handle = tris->modify_vertices_handle(current_thread);
         idx_handle->unclean_set_num_rows(quads.size() * 6);
         uint32_t *idx_ptr = (uint32_t *)idx_handle->get_write_pointer();
 
@@ -1219,7 +1219,7 @@ generate_quads(GeomNode *geom_node, const QuadMap &quad_map) {
         }
       } else {
         // 16-bit index case.
-        PT(GeomVertexArrayDataHandle) idx_handle = indices->modify_handle();
+        PT(GeomVertexArrayDataHandle) idx_handle = tris->modify_vertices_handle(current_thread);
         idx_handle->unclean_set_num_rows(quads.size() * 6);
         uint16_t *idx_ptr = (uint16_t *)idx_handle->get_write_pointer();
 
@@ -1329,10 +1329,9 @@ assemble_paragraph(TextAssembler::PlacedGlyphs &placed_glyphs) {
     // width is defined by the wordwrap size with the upper left corner
     // starting from 0,0,0 if the wordwrap size is unspecified the alignment
     // could eventually result wrong.
-    PN_stdfloat xpos;
+    PN_stdfloat xpos = 0;
     switch (align) {
     case TextProperties::A_left:
-      xpos = 0.0f;
       _lr[0] = max(_lr[0], row_width);
       break;
 
@@ -1348,7 +1347,6 @@ assemble_paragraph(TextAssembler::PlacedGlyphs &placed_glyphs) {
       break;
 
     case TextProperties::A_boxed_left:
-      xpos = 0.0f;
       _lr[0] = max(_lr[0], max(row_width, wordwrap));
       break;
 
@@ -1489,6 +1487,7 @@ assemble_row(TextAssembler::TextRow &row,
       placement._scale = properties->get_glyph_scale();
       placement._xpos = (xpos - frame[0]);
       placement._ypos = (properties->get_glyph_shift() - frame[2]);
+      placement._slant = properties->get_slant();
       placement._properties = properties;
 
       placed_glyphs.push_back(placement);

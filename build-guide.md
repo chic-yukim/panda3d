@@ -5,6 +5,7 @@
 * 8381118a976184836cfccdd828ea315f44edf783
 * 82b77286836d50f47526e5c9875b8ca3e891b38f : fail
 * 29ea65bb3ff2352319580806349aad9715b36588 : fail
+* 72262ea15aeadfe6b2ce8d1fa7cd4930e2901e75 : ok
 
 
 # Build Options
@@ -14,7 +15,7 @@ makepanda\makepanda.py --threads 8 --msvc-version=12 --windows-sdk=8.1 --everyth
 
 ## Minimal Version
 ```
-makepanda\makepanda.py --threads 8 --msvc-version=14 --windows-sdk=10 --nothing --use-direct --use-gl --use-zlib --use-png --use-jpeg --use-freetype --use-pandatool --use-sse2
+makepanda\makepanda.py --threads 8 --optimize 4 --msvc-version=14 --windows-sdk=10 --nothing --use-direct --use-gl --use-zlib --use-png --use-jpeg --use-freetype --use-egg --use-pandatool --use-sse2
 ```
 
 ## Windows 10 SDK
@@ -36,14 +37,6 @@ Below lines are added.
 #undef EXPTP
 #define EXPCL
 #define EXPTP
-```
-
-## mouseWatcher.h
-`__declspec(noinline)` code is added.
-```
-__declspec(noinline) INLINE bool has_mouse() const;
-
-__declspec(noinline) INLINE const LPoint2 &get_mouse() const;
 ```
 
 ## dtoolbase.h

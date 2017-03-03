@@ -65,10 +65,8 @@ PUBLISHED:
 
   bool remove_region(MouseWatcherRegion *region);
 
-  __declspec(noinline)
   INLINE bool has_mouse() const;
   INLINE bool is_mouse_open() const;
-  __declspec(noinline)
   INLINE const LPoint2 &get_mouse() const;
   INLINE PN_stdfloat get_mouse_x() const;
   INLINE PN_stdfloat get_mouse_y() const;

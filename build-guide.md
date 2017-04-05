@@ -1,13 +1,3 @@
-# Build version
-* 8b67ab31f511cb209d0ba3828c02ce3941ef36d8 : ok
-* f94db0661e076998d7cb3b0e827b31d1aae02d02 : ok
-* 6f168446d05767371f43cf9e1c6cbcf0ca5a2f29 : ok
-* 8381118a976184836cfccdd828ea315f44edf783
-* 82b77286836d50f47526e5c9875b8ca3e891b38f : fail
-* 29ea65bb3ff2352319580806349aad9715b36588 : fail
-* 72262ea15aeadfe6b2ce8d1fa7cd4930e2901e75 : ok
-
-
 # Build Options
 ```
 makepanda\makepanda.py --threads 8 --msvc-version=12 --windows-sdk=8.1 --everything --no-python --no-artoolkit --no-eigen --no-ffmpeg --no-fmodex --no-openal --no-openssl --no-squish --no-vrpn --no-fftw --no-opencv --no-awesomium --no-rocket --no-ode --no-maya2016

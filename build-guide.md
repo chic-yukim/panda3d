@@ -1,10 +1,5 @@
 # Build Options
 ```
-makepanda\makepanda.py --threads 8 --msvc-version=12 --windows-sdk=8.1 --everything --no-python --no-artoolkit --no-eigen --no-ffmpeg --no-fmodex --no-openal --no-openssl --no-squish --no-vrpn --no-fftw --no-opencv --no-awesomium --no-rocket --no-ode --no-maya2016
-```
-
-## Minimal Version
-```
 makepanda\makepanda.py --threads 8 --optimize 4 --msvc-version=14 --windows-sdk=10 --nothing --use-direct --use-gl --use-zlib --use-png --use-jpeg --use-freetype --use-egg --use-pandatool --use-sse2
 ```
 
@@ -15,7 +10,7 @@ In makepanda/makepandacore.py, modify SDK version for `SDK["MSPLATFORM"]`.
 ## License Issue (for closed app)
 * ffmpeg
 * fmodex
-* openal
+* openal: LGPL
 
 
 
@@ -30,6 +25,7 @@ Below lines are added.
 ```
 
 ## dtoolbase.h
+Modify below to use Boost 1.61.
 ```
 //#define _WIN32_WINNT 0x0502   // original code
 #define _WIN32_WINNT 0x0600

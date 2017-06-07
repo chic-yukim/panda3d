@@ -34,6 +34,11 @@
 
 #include "pvector.h"
 
+#undef EXPCL
+#undef EXPTP
+#define EXPCL
+#define EXPTP
+
 #if defined(WIN32_VC) && !defined(CPPPARSER)
 
   #ifdef HAVE_DINKUM

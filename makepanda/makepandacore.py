@@ -397,13 +397,13 @@ def CrossCompiling():
     return GetTarget() != GetHost()
 
 def GetCC():
-    if TARGET == 'darwin':
+    if TARGET == 'darwin' or TARGET == 'freebsd':
         return os.environ.get('CC', TOOLCHAIN_PREFIX + 'clang')
     else:
         return os.environ.get('CC', TOOLCHAIN_PREFIX + 'gcc')
 
 def GetCXX():
-    if TARGET == 'darwin':
+    if TARGET == 'darwin' or TARGET == 'freebsd':
         return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'clang++')
     else:
         return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'g++')
@@ -3162,6 +3162,13 @@ def TargetAdd(target, dummy=0, opts=[], input=[], dep=[], ipath=None, winrc=None
             outbase = os.path.basename(x)[:-3]
             woutc = GetOutputDir()+"/tmp/"+outbase+"_igate.cxx"
             t.deps[woutc] = 1
+
+        if target.endswith(".in"):
+            # Add any .N files.
+            base, ext = os.path.splitext(fullinput)
+            fulln = base + ".N"
+            if os.path.isfile(fulln):
+                t.deps[fulln] = 1
 
     for x in dep:
         fulldep = FindLocation(x, ipath)

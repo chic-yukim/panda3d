@@ -476,7 +476,7 @@ unpack_ufloat_c(uint32_t data) {
 INLINE int GeomVertexData::
 add_transform(TransformTable *table, const VertexTransform *transform,
               TransformMap &already_added) {
-  pair<TransformMap::iterator, bool> result = already_added.insert(TransformMap::value_type(transform, table->get_num_transforms()));
+  pair<TransformMap::iterator, bool> result = already_added.insert(TransformMap::value_type(transform, (int)table->get_num_transforms()));
 
   if (result.second) {
     table->add_transform(transform);

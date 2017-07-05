@@ -26,12 +26,16 @@ And third-party license files are in 'thirdparty-licenses' directory.
 
 ## Windows
 
-We currently build using the Microsoft Visual C++ 2015 compiler.
+We currently build using the Microsoft Visual Studio 2015 and 2017.
+Visual Studio 2015 and 2017 are compatible, so you can use any one.
+(for example, you can use VS2017 with VS2015 binary version.)
 
 You will also need to have the third-party dependency libraries available for
 the build scripts to use. These are available from the URL,
 depending on whether you are on a 32-bit or 64-bit system:
 https://www.panda3d.org/forums/viewtopic.php?f=9&t=18775
+
+Note that it is VS2015 version, but you can built it with VS2017 as mentioned above.
 
 After acquiring these dependencies, you may simply build Panda3D from the
 command prompt using the following command:
@@ -67,6 +71,7 @@ Modify below to use Boost above 1.60
 //#define _WIN32_WINNT 0x0502   // original code
 #define _WIN32_WINNT 0x0600
 ```
+
 
 ### Third-party
 #### fcollada

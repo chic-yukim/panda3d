@@ -26,7 +26,7 @@ And third-party license files are in 'thirdparty-licenses' directory.
 
 ## Windows
 
-We currently build using the Microsoft Visual Studio 2015 and 2017.
+We currently build using the Microsoft Visual Studio 2015 and 2017 on Windows 10. (default is VS2017.)
 Visual Studio 2015 and 2017 are compatible, so you can use any one.
 (for example, you can use VS2017 with VS2015 binary version.)
 
@@ -40,8 +40,14 @@ Note that it is VS2015 version, but you can built it with VS2017 as mentioned ab
 After acquiring these dependencies, you may simply build Panda3D from the
 command prompt using the following command:
 
-```bash
+```
 .\build.bat
+```
+
+### Visual Studio 2015
+If you use VS2015, then you need to modify 'build.bat' file as below.
+```
+SET MSVC_VERSION=14
 ```
 
 

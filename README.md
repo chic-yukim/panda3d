@@ -35,7 +35,7 @@ the build scripts to use. These are available from the URL,
 depending on whether you are on a 32-bit or 64-bit system:
 https://www.panda3d.org/forums/viewtopic.php?f=9&t=18775
 
-Note that it is VS2015 version, but you can built it with VS2017 as mentioned above.
+Note that those libraries are VS2015 version, but you can build with VS2017 as the mentioned above.
 
 After acquiring these dependencies, you may simply build Panda3D from the
 command prompt using the following command:
@@ -54,10 +54,7 @@ SET MSVC_VERSION=14
 # Customizing
 
 ## Build Command
-We use below command and this is written in 'build.bat' file.
-```
-thirdparty\win-python3.5-x64\python.exe makepanda\makepanda.py --threads 8 --optimize 4 --msvc-version=14 --windows-sdk=10.0.14393.0 --nothing --use-direct --use-gl --use-eigen --use-openal --use-vorbis --use-zlib --use-png --use-jpeg --use-squish --use-freetype --use-assimp --use-egg --use-pandatool --use-sse2
-```
+See 'build.bat' file.
 
 
 ## Modified Codes

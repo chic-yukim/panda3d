@@ -1,7 +1,6 @@
-# Panda3D in CRSF
+# Panda3D in Develop Branch
 
-This build version is used in CRSF SDK.
-(https://github.com/bluekyu/panda3d)
+This build version is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
 
 
 ## Thrid-party Licenses

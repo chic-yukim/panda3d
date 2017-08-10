@@ -1,6 +1,8 @@
 # Panda3D in Develop Branch
 
-This build version is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
+This **develop** branch is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
+
+In this project, **master** branch is used to track upstream (https://github.com/panda3d/panda3d)
 
 
 ## Thrid-party Licenses

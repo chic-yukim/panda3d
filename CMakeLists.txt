@@ -11,8 +11,8 @@ if(WIN32)
     endif()
 endif()
 
-find_package(PythonInterp 3.5 REQUIRED)
-find_package(PythonLibs 3.5 REQUIRED)
+find_package(PythonInterp REQUIRED)
+find_package(PythonLibs REQUIRED)
 
 # cache and options
 set(panda3d_USE_OPTIONS "png" "jpeg" "squish" "assimp" "openal" "vorbis" "pandatool")

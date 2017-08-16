@@ -1,0 +1,54 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: ${branch}-{build}
+
+# branches to build
+branches:
+  only:
+  - develop
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# scripts that are called at very beginning, before repo cloning
+init:
+- cmd: >-
+    git --version
+    cmake --version
+
+    set PATH=C:\Python35-x64;%PATH%
+
+    git clone https://github.com/bluekyu/render_pipeline_cpp_ci.git c:\projects\render_pipeline_cpp_ci
+
+
+# environment variables
+environment:
+  CMAKE_GENERATOR: Visual Studio 15 2017 Win64
+  PANDA3D_SOURCE_DIR: c:/projects/panda3d
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: x64
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+- cmd: >-
+    cd c:\projects\render_pipeline_cpp_ci
+
+    mkdir _build
+
+    cd _build
+
+    cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%CD:\=/%/install -Dpanda3d_SOURCE_DIR:PATH="%PANDA3D_SOURCE_DIR%" -Dpanda3d_MANUAL_GIT:BOOL=ON ..
+
+    cmake --build . --config Release --target ALL_BUILD

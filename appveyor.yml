@@ -14,7 +14,7 @@ image: Visual Studio 2017
 
 # scripts that are called at very beginning, before repo cloning
 init:
-  - git clone https://github.com/bluekyu/render_pipeline_cpp_ci c:\projects\render_pipeline_cpp_ci
+  - git clone https://github.com/bluekyu/render_pipeline_cpp_ci.git c:\projects\render_pipeline_cpp_ci
 
 # clone directory
 clone_folder: c:\projects\render_pipeline_cpp_ci\panda3d

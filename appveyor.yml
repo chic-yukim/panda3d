@@ -17,11 +17,12 @@ init:
   - git clone https://github.com/bluekyu/render_pipeline_cpp_ci.git c:\projects\render_pipeline_cpp_ci
 
 # clone directory
-clone_folder: c:\projects\render_pipeline_cpp_ci\panda3d
+clone_folder: c:\projects\panda3d
 
 # environment variables
 environment:
   CMAKE_GENERATOR: Visual Studio 15 2017 Win64
+  PANDA3D_SOURCE_DIR: c:/projects/panda3d
 
 #---------------------------------#
 #       build configuration       #
@@ -31,5 +32,5 @@ build_script:
   - cmake --version
   - cd c:\projects\render_pipeline_cpp_ci
   - mkdir _build && cd _build
-  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%CD:\=/%/install -DCMAKE_BUILD_TYPE=Release -Dpanda3d_MANUAL_GIT:BOOL=ON ..
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%CD:\=/%/install -DCMAKE_BUILD_TYPE=Release -Dpanda3d_SOURCE_DIR:PATH="%PANDA3D_SOURCE_DIR%" -Dpanda3d_MANUAL_GIT:BOOL=ON ..
   - cmake --build . --config Release --target ALL_BUILD

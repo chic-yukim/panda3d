@@ -1,5 +1,7 @@
 # Panda3D in Develop Branch
 
+[![Build status](https://ci.appveyor.com/api/projects/status/dti693iydj981tu5?svg=true)](https://ci.appveyor.com/project/bluekyu/panda3d)
+
 This **develop** branch is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
 
 In this project, **master** branch is used to track upstream (https://github.com/panda3d/panda3d)

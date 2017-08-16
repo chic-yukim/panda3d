@@ -11,8 +11,8 @@ if(WIN32)
     endif()
 endif()
 
-find_package(PythonInterp REQUIRED 3.5)
-find_package(PythonLibs REQUIRED 3.5)
+find_package(PythonInterp 3.5 REQUIRED)
+find_package(PythonLibs 3.5 REQUIRED)
 
 # cache and options
 set(panda3d_USE_OPTIONS "png" "jpeg" "squish" "assimp" "openal" "vorbis" "pandatool")
@@ -44,8 +44,6 @@ if(NOT panda3d_build_minimal)
 endif()
 
 set(panda3d_build_command ${panda3d_build_command} ${panda3d_build_EXTRA_INPUT})
-
-message(${panda3d_build_command})
 
 add_custom_target(panda3d ALL ${panda3d_build_command}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"

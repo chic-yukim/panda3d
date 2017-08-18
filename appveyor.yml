@@ -21,6 +21,7 @@ image: Visual Studio 2017
 init:
 - cmd: >-
     git --version
+    
     cmake --version
 
     set PATH=C:\Python35-x64;%PATH%

@@ -4,6 +4,9 @@
 cmake_minimum_required(VERSION 3.6)
 project(panda3d)
 
+# === configure ====================================================================================
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
+
 # use thirdparty/win-python* if exist
 if(WIN32)
     file(GLOB panda3d_thirdparty_python_dir "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/win-python*")
@@ -15,8 +18,9 @@ endif()
 find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
 
+set(panda3d_build_outputdir "${PROJECT_BINARY_DIR}/built")
+
 # cache options
-set(panda3d_build_outputdir "" CACHE PATH "Path of output directory")
 set(panda3d_build_threads "4" CACHE STRINGS "The number of threads")
 set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level")
 
@@ -43,17 +47,12 @@ set(panda3d_build_command ${PYTHON_EXECUTABLE} makepanda/makepanda.py)
 
 # apply options
 set(panda3d_build_command ${panda3d_build_command}
+    --outputdir \"${panda3d_build_outputdir}\"
     --threads ${panda3d_build_threads}
     --optimize ${panda3d_build_optimize}
     --override PHAVE_MINMAX_H=UNDEF
     --nothing
 )
-
-if(panda3d_build_outputdir)
-    set(panda3d_build_command ${panda3d_build_command}
-        --outputdir ${panda3d_build_outputdir}
-    )
-endif()
 
 if(WIN32)
     if(MSVC_VERSION GREATER 1920)
@@ -97,6 +96,39 @@ else()
     endforeach()
 endif()
 
-add_custom_target(panda3d ${panda3d_build_command}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+set(pdna3d_git_dir_path "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+if(EXISTS "${pdna3d_git_dir_path}")
+    if(EXISTS "${pdna3d_git_dir_path}/HEAD")
+        file(STRINGS "${pdna3d_git_dir_path}/HEAD" panda3d_git_HEAD_contents)
+        string(REGEX MATCH "^[0-9a-f]+$" panda3d_git_HEAD_hash ${panda3d_git_HEAD_contents})
+        if(NOT panda3d_git_HEAD_hash)
+            string(REGEX REPLACE "^ref: (.*)$" "\\1" panda3d_git_HEAD_ref_path ${panda3d_git_HEAD_contents})
+            file(STRINGS "${pdna3d_git_dir_path}/${panda3d_git_HEAD_ref_path}" panda3d_git_HEAD_hash)
+        endif()
+
+        if(panda3d_git_HEAD_hash)
+            message(STATUS "[panda3d] git-commit: ${panda3d_git_HEAD_hash}")
+            set(panda3d_build_command ${panda3d_build_command} --git-commit ${panda3d_git_HEAD_hash})
+        else()
+            message(WARNING "[panda3d] Cannot find git-commit hash.")
+        endif()
+    else()
+        message(ERROR "[git-utils] HEAD file does NOT exist in .git directory!")
+    endif()
+endif()
+# ==================================================================================================
+
+# === target =======================================================================================
+add_custom_target(panda3d ${panda3d_build_command} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+# ==================================================================================================
+
+# === test =========================================================================================
+# runtime test
+enable_testing()
+add_subdirectory("${PROJECT_SOURCE_DIR}/makepanda/test_cpp")
+
+add_test(NAME panda3d_test_cpp
+    COMMAND $<TARGET_FILE:panda3d_test>
+    WORKING_DIRECTORY "${panda3d_build_outputdir}/bin"
 )
+# ==================================================================================================

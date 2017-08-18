@@ -1,6 +1,6 @@
 # Panda3D in Develop Branch
 
-[![Build status](https://ci.appveyor.com/api/projects/status/dti693iydj981tu5?svg=true)](https://ci.appveyor.com/project/bluekyu/panda3d)
+[![Windows build status](https://ci.appveyor.com/api/projects/status/dti693iydj981tu5?svg=true)](https://ci.appveyor.com/project/bluekyu/panda3d)
 
 This **develop** branch is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
 
@@ -83,6 +83,12 @@ In order to use Boost above 1.60
 /DWINVER=0x600
 ```
 
+### dtoolbase_cc.h
+Move `DEFAULT_CTOR` macro to the block of Visual Studio 2015.
+```
+#elif defined(_MSC_VER) && _MSC_VER >= 1900 // Visual Studio 2015
+#  define DEFAULT_CTOR = default
+```
 
 
 ### Third-party

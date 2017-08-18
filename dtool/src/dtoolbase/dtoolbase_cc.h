@@ -205,6 +205,7 @@ template<class T> typename remove_reference<T>::type &&move(T &&t) {
 #  endif
 
 #elif defined(_MSC_VER) && _MSC_VER >= 1900 // Visual Studio 2015
+#  define DEFAULT_CTOR = default
 #  define CONSTEXPR constexpr
 #  define NOEXCEPT noexcept
 #  define USE_MOVE_SEMANTICS
@@ -218,7 +219,6 @@ template<class T> typename remove_reference<T>::type &&move(T &&t) {
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER >= 1800 // Visual Studio 2013
-#  define DEFAULT_CTOR = default
 #  define DEFAULT_DTOR = default
 #  define DEFAULT_ASSIGN = default
 #  define DELETED = delete

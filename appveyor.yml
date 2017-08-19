@@ -47,4 +47,4 @@ build_script:
 
     mklink /J panda3d C:\projects\panda3d
 
-    python build.py panda3d --cmake-generator %CMAKE_GENERATOR%
+    python build.py panda3d --cmake-generator "%CMAKE_GENERATOR%"

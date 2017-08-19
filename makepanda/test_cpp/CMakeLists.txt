@@ -6,13 +6,13 @@ project(panda3d_test)
 
 # === configure ====================================================================================
 if(WIN32)
-    set(panda3d_import_location "${panda3d_build_outputdir}/lib/")
+    set(panda3d_import_location "${panda3d_build_outputdir}/lib/lib")
 else()
     set(panda3d_import_location "")
 endif()
 set(panda3d_components p3framework panda pandaexpress p3dtool p3dtoolconfig p3direct p3interrogatedb)
 foreach(component_name ${panda3d_components})
-    list(APPEND panda3d_libraries "${panda3d_import_location}${CMAKE_IMPORT_LIBRARY_PREFIX}${component_name}${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+    list(APPEND panda3d_libraries "${panda3d_import_location}${component_name}${CMAKE_IMPORT_LIBRARY_SUFFIX}")
 endforeach()
 # ==================================================================================================
 

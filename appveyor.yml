@@ -33,7 +33,7 @@ environment:
 
 # build cache to preserve files/folders between builds
 cache:
-    - C:\projects\render_pipeline_cpp_ci\_install
+    - C:\projects\_install -> appveyor.yml
 
 # scripts that run after cloning repository
 install:
@@ -52,4 +52,4 @@ build_script:
 - cmd: >-
     cd c:\projects\render_pipeline_cpp_ci
 
-    python build.py panda3d --cmake-generator "%CMAKE_GENERATOR%"
+    python build.py panda3d --cmake-generator "%CMAKE_GENERATOR%" --install-prefix="C:/projects/_install"

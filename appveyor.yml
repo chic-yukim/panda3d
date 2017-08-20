@@ -26,12 +26,19 @@ init:
 
     set PATH=C:\Python35-x64;%PATH%
 
-    git clone https://github.com/bluekyu/render_pipeline_cpp_ci.git c:\projects\render_pipeline_cpp_ci
-
 
 # environment variables
 environment:
   CMAKE_GENERATOR: Visual Studio 15 2017 Win64
+
+# build cache to preserve files/folders between builds
+cache:
+    - C:\projects\render_pipeline_cpp_ci\_install
+
+# scripts that run after cloning repository
+install:
+    - git clone https://github.com/bluekyu/render_pipeline_cpp_ci.git c:\projects\render_pipeline_cpp_ci
+    - mklink /J c:\projects\render_pipeline_cpp_ci\panda3d C:\projects\panda3d
 
 #---------------------------------#
 #       build configuration       #
@@ -44,7 +51,5 @@ platform: x64
 build_script:
 - cmd: >-
     cd c:\projects\render_pipeline_cpp_ci
-
-    mklink /J panda3d C:\projects\panda3d
 
     python build.py panda3d --cmake-generator "%CMAKE_GENERATOR%"

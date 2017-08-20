@@ -24,7 +24,7 @@ init:
 
     cmake --version
 
-    set PATH=C:\Python35-x64;%PATH%
+    set PATH=C:\Python36-x64;%PATH%
 
 
 # environment variables

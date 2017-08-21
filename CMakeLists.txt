@@ -7,20 +7,12 @@ project(panda3d)
 # === configure ====================================================================================
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
 
-# use thirdparty/win-python* if exist
-if(WIN32)
-    file(GLOB panda3d_thirdparty_python_dir "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/win-python*")
-    if(EXISTS ${panda3d_thirdparty_python_dir})
-        list(INSERT CMAKE_PROGRAM_PATH 0 ${panda3d_thirdparty_python_dir})
-    endif()
-endif()
-
-find_package(PythonInterp REQUIRED)
-find_package(PythonLibs REQUIRED)
-
 set(panda3d_build_outputdir "${PROJECT_BINARY_DIR}/built")
 
 # cache options
+if(WIN32)
+    set(panda3d_thirdparty_base "" CACHE PATH "The path of thirdparty")
+endif()
 set(panda3d_build_threads "4" CACHE STRINGS "The number of threads")
 set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level")
 
@@ -39,6 +31,20 @@ set(panda3d_build_off_packages "python" "nvidiacg" "fmodex" "opus" "ffmpeg" "sws
 foreach(pkg_id ${panda3d_build_off_packages})
     option(panda3d_use_${pkg_id} "Use ${pkg_id}" OFF)
 endforeach()
+
+# use thirdparty/win-python* if exist
+if(WIN32)
+    if(EXISTS "$ENV{MAKEPANDA_THIRDPARTY}")
+        list(INSERT CMAKE_PROGRAM_PATH 0 "$ENV{MAKEPANDA_THIRDPARTY}")
+    endif()
+    file(GLOB panda3d_thirdparty_python_dir "${panda3d_thirdparty_base}/win-python*")
+    if(EXISTS "${panda3d_thirdparty_python_dir}")
+        list(INSERT CMAKE_PROGRAM_PATH 0 "${panda3d_thirdparty_python_dir}")
+    endif()
+endif()
+
+find_package(PythonInterp REQUIRED)
+find_package(PythonLibs REQUIRED)
 
 set(panda3d_build_packages ${panda3d_build_on_packages} ${panda3d_build_off_packages})
 
@@ -119,7 +125,14 @@ endif()
 # ==================================================================================================
 
 # === target =======================================================================================
-add_custom_target(panda3d ${panda3d_build_command} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+if(EXISTS "${panda3d_thirdparty_base}")
+    add_custom_target(panda3d ${CMAKE_COMMAND} -E env
+        MAKEPANDA_THIRDPARTY=\"${panda3d_thirdparty_base}\"
+        ${panda3d_build_command}
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+else()
+    add_custom_target(panda3d ${panda3d_build_command} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+endif()
 # ==================================================================================================
 
 # === test =========================================================================================

@@ -18,30 +18,10 @@ set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level")
 
 # package options
 option(panda3d_build_minimal "Build with minimal options" OFF)
+option(panda3d_build_everything "Build with everything options" OFF)
 set(panda3d_build_on_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
     "openal" "vorbis" "assimp" "egg" "freetype" "pandatool" "sse2"
 )
-foreach(pkg_id ${panda3d_build_on_packages})
-    option(panda3d_use_${pkg_id} "Use ${pkg_id}" ON)
-endforeach()
-
-set(panda3d_build_off_packages "python" "nvidiacg" "fmodex" "opus" "ffmpeg" "swscale" "swresample" "ode" "physx"
-    "bullet" "pandaphysics" "speedtree" "tiff" "openexr" "opencv" "contrib"
-)
-foreach(pkg_id ${panda3d_build_off_packages})
-    option(panda3d_use_${pkg_id} "Use ${pkg_id}" OFF)
-endforeach()
-
-# use thirdparty/win-python* if exist
-if(WIN32)
-    if(EXISTS "$ENV{MAKEPANDA_THIRDPARTY}")
-        list(INSERT CMAKE_PROGRAM_PATH 0 "$ENV{MAKEPANDA_THIRDPARTY}")
-    endif()
-    file(GLOB panda3d_thirdparty_python_dir "${panda3d_thirdparty_base}/win-python*")
-    if(EXISTS "${panda3d_thirdparty_python_dir}")
-        list(INSERT CMAKE_PROGRAM_PATH 0 "${panda3d_thirdparty_python_dir}")
-    endif()
-endif()
 
 find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
@@ -57,7 +37,6 @@ set(panda3d_build_command ${panda3d_build_command}
     --threads ${panda3d_build_threads}
     --optimize ${panda3d_build_optimize}
     --override PHAVE_MINMAX_H=UNDEF
-    --nothing
 )
 
 if(WIN32)
@@ -92,13 +71,13 @@ endif()
 # apply package options
 if(panda3d_build_minimal)
     foreach(pkg_id "direct" "gl" "eigen" "zlib" "freetype" "egg" "sse2")
-        set(panda3d_build_command ${panda3d_build_command} --use-${pkg_id})
+        set(panda3d_build_command ${panda3d_build_command} --nothing --use-${pkg_id})
     endforeach()
+elseif(panda3d_build_everything)
+    set(panda3d_build_command ${panda3d_build_command} --everything)
 else()
     foreach(pkg_id ${panda3d_build_packages})
-        if(panda3d_use_${pkg_id})
-            set(panda3d_build_command ${panda3d_build_command} --use-${pkg_id})
-        endif()
+        set(panda3d_build_command ${panda3d_build_command} --nothing --use-${pkg_id})
     endforeach()
 endif()
 

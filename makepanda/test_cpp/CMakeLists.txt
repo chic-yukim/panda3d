@@ -6,7 +6,7 @@ project(panda3d_test)
 
 # === configure ====================================================================================
 if(WIN32)
-    set(panda3d_import_location "${panda3d_build_outputdir}/lib/lib")
+    set(panda3d_import_location "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdir}/lib/lib")
 else()
     set(panda3d_import_location "")
 endif()

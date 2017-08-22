@@ -7,7 +7,8 @@ project(panda3d)
 # === configure ====================================================================================
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
 
-set(panda3d_build_outputdir "${PROJECT_BINARY_DIR}/built")
+get_filename_component(panda3d_build_outputdir ${PROJECT_BINARY_DIR} NAME)
+set(panda3d_build_outputdir "${panda3d_build_outputdir}-built")
 
 # cache options
 if(WIN32)
@@ -81,7 +82,7 @@ else()
     endforeach()
 endif()
 
-set(pdna3d_git_dir_path "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+set(pdna3d_git_dir_path "${PROJECT_SOURCE_DIR}/.git")
 if(EXISTS "${pdna3d_git_dir_path}")
     if(EXISTS "${pdna3d_git_dir_path}/HEAD")
         file(STRINGS "${pdna3d_git_dir_path}/HEAD" panda3d_git_HEAD_contents)
@@ -108,9 +109,9 @@ if(EXISTS "${panda3d_thirdparty_base}")
     add_custom_target(panda3d ${CMAKE_COMMAND} -E env
         MAKEPANDA_THIRDPARTY=\"${panda3d_thirdparty_base}\"
         ${panda3d_build_command}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 else()
-    add_custom_target(panda3d ${panda3d_build_command} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+    add_custom_target(panda3d ${panda3d_build_command} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 endif()
 # ==================================================================================================
 
@@ -126,6 +127,6 @@ add_test(NAME panda3d_test_cpp
 # ==================================================================================================
 
 # === install ======================================================================================
-install(DIRECTORY "${panda3d_build_outputdir}/" DESTINATION "."
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdir}/" DESTINATION "."
         PATTERN "tmp" EXCLUDE)
 # ==================================================================================================

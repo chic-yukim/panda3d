@@ -5,8 +5,9 @@ cmake_minimum_required(VERSION 3.6)
 project(panda3d_test)
 
 # === configure ====================================================================================
+set(panda3d_includes "${panda3d_build_outputdir_path}/include")
 if(WIN32)
-    set(panda3d_import_location "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdir}/lib/lib")
+    set(panda3d_import_location "${panda3d_build_outputdir_path}/lib/lib")
 else()
     set(panda3d_import_location "")
 endif()
@@ -33,6 +34,6 @@ else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${panda3d_build_outputdir}/include")
+target_include_directories(${PROJECT_NAME} PRIVATE "${panda3d_includes}")
 target_link_libraries(${PROJECT_NAME} PRIVATE ${panda3d_libraries})
 # ==================================================================================================

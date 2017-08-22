@@ -9,6 +9,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
 
 get_filename_component(panda3d_build_outputdir ${PROJECT_BINARY_DIR} NAME)
 set(panda3d_build_outputdir "${panda3d_build_outputdir}-built")
+set(panda3d_build_outputdir_path "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdir}")
 
 # cache options
 if(WIN32)
@@ -20,14 +21,12 @@ set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level")
 # package options
 option(panda3d_build_minimal "Build with minimal options" OFF)
 option(panda3d_build_everything "Build with everything options" OFF)
-set(panda3d_build_on_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
+set(panda3d_build_default_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
     "openal" "vorbis" "assimp" "egg" "freetype" "pandatool" "sse2"
 )
 
 find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
-
-set(panda3d_build_packages ${panda3d_build_on_packages} ${panda3d_build_off_packages})
 
 # setup build command
 set(panda3d_build_command ${PYTHON_EXECUTABLE} makepanda/makepanda.py)
@@ -71,14 +70,16 @@ endif()
 
 # apply package options
 if(panda3d_build_minimal)
+    set(panda3d_build_command ${panda3d_build_command} --nothing)
     foreach(pkg_id "direct" "gl" "eigen" "zlib" "freetype" "egg" "sse2")
-        set(panda3d_build_command ${panda3d_build_command} --nothing --use-${pkg_id})
+        set(panda3d_build_command ${panda3d_build_command} --use-${pkg_id})
     endforeach()
 elseif(panda3d_build_everything)
     set(panda3d_build_command ${panda3d_build_command} --everything)
 else()
-    foreach(pkg_id ${panda3d_build_packages})
-        set(panda3d_build_command ${panda3d_build_command} --nothing --use-${pkg_id})
+    set(panda3d_build_command ${panda3d_build_command} --nothing)
+    foreach(pkg_id ${panda3d_build_default_packages})
+        set(panda3d_build_command ${panda3d_build_command} --use-${pkg_id})
     endforeach()
 endif()
 
@@ -122,11 +123,11 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/makepanda/test_cpp")
 
 add_test(NAME panda3d_test_cpp
     COMMAND $<TARGET_FILE:panda3d_test>
-    WORKING_DIRECTORY "${panda3d_build_outputdir}/bin"
+    WORKING_DIRECTORY "${panda3d_build_outputdir_path}/bin"
 )
 # ==================================================================================================
 
 # === install ======================================================================================
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdir}/" DESTINATION "."
+install(DIRECTORY "${panda3d_build_outputdir_path}/" DESTINATION "."
         PATTERN "tmp" EXCLUDE)
 # ==================================================================================================

@@ -33,7 +33,7 @@ environment:
 
 # build cache to preserve files/folders between builds
 cache:
-    - C:\projects\_install -> appveyor.yml
+    - C:\projects\_install
 
 # scripts that run after cloning repository
 install:

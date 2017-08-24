@@ -1,10 +1,19 @@
 # Panda3D in Develop Branch
 
-[![Windows build status](https://ci.appveyor.com/api/projects/status/dti693iydj981tu5?svg=true)](https://ci.appveyor.com/project/bluekyu/panda3d)
-
 This **develop** branch is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
 
 In this project, **master** branch is used to track upstream (https://github.com/panda3d/panda3d)
+
+
+## Build Status
+
+| OS       | Build Status | Latest Build |
+| :------: | :----------: | :----------: |
+| Windows  | [![win-badge]][win-link] | [Download][win-download] |
+
+[win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true "AppVeyor build status"
+[win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop "AppVeyor build link"
+[win-download]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.zip?branch=develop "Download latest build"
 
 
 ## Thrid-party Licenses

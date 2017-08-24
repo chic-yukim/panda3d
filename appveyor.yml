@@ -9,6 +9,11 @@ version: '{branch}-{build}'
 #    environment configuration    #
 #---------------------------------#
 
+# branches to build
+branches:
+  only:
+  - develop
+
 # Build worker image (VM template)
 image: Visual Studio 2017
 

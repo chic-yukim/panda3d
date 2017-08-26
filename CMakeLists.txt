@@ -19,7 +19,6 @@ set(panda3d_build_threads "4" CACHE STRINGS "The number of threads")
 set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level")
 
 # package options
-option(panda3d_build_minimal "Build with minimal options" OFF)
 option(panda3d_build_everything "Build with everything options" OFF)
 set(panda3d_build_default_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
     "openal" "vorbis" "assimp" "egg" "freetype" "pandatool" "sse2"
@@ -69,12 +68,7 @@ if(WIN32)
 endif()
 
 # apply package options
-if(panda3d_build_minimal)
-    set(panda3d_build_command ${panda3d_build_command} --nothing)
-    foreach(pkg_id "direct" "gl" "eigen" "zlib" "freetype" "egg" "sse2")
-        set(panda3d_build_command ${panda3d_build_command} --use-${pkg_id})
-    endforeach()
-elseif(panda3d_build_everything)
+if(panda3d_build_everything)
     set(panda3d_build_command ${panda3d_build_command} --everything)
 else()
     set(panda3d_build_command ${panda3d_build_command} --nothing)

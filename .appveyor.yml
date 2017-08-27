@@ -30,21 +30,22 @@ init:
         Set-AppveyorBuildVariable -Name 'TRIGGER_NAME' -Value "$env:APPVEYOR_PROJECT_NAME"
         Set-AppveyorBuildVariable -Name 'TRIGGER_COMMIT' -Value "$env:APPVEYOR_REPO_COMMIT".substring(0, 8)
     }
-- ps: git --version
-- ps: python --version
-- ps: cmake --version
+- git --version
+- python --version
+- cmake --version
 
 # environment variables
 environment:
     CMAKE_PREFIX_PATH: C:\projects\_install;C:\projects\_cache;
+    CMAKE_GENERATOR: Visual Studio 15 2017 Win64
     MAKEPANDA_THIRDPARTY: C:/projects/_install/panda3d-thirdparty
     PATH: C:\Python36-x64;%PATH%
 
 # scripts that run after cloning repository
 install:
 - ps: (mkdir C:\projects\_install) -and (pushd C:\projects\_install)
-- ps: Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.zip?branch=develop'
-- ps: 7z x panda3d-thirdparty.zip -opanda3d-thirdparty
+- ps: Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=develop'
+- 7z x -y panda3d-thirdparty.7z > nul
 - ps: popd
 
 # build cache to preserve files/folders between builds
@@ -59,11 +60,14 @@ cache:
 build_script:
 - ps: (mkdir _build) -and (pushd _build)
 - cmd: >-
-    cmake -G "Visual Studio 15 2017 Win64" -Wno-dev
-    -DCMAKE_INSTALL_PREFIX="C:/projects/panda3d/_artifacts"
+    cmake -G "%CMAKE_GENERATOR%" -Wno-dev
+    -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
     ..
-- cmd: cmake --build . --config "Release" --target INSTALL
+- cmake --build . --config "Release" --target INSTALL
 - ps: popd
+
+after_build:
+- 7z a panda3d.7z "C:/projects/_install/panda3d"
 
 #---------------------------------#
 #       tests configuration       #
@@ -77,8 +81,7 @@ test: off
 #---------------------------------#
 
 artifacts:
-- path: _artifacts
-  name: panda3d
+- path: panda3d.7z
 
 #---------------------------------#
 #        global handlers          #

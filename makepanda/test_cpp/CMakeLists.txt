@@ -6,15 +6,19 @@ project(panda3d_test)
 
 # === configure ====================================================================================
 set(panda3d_includes "${panda3d_build_outputdir_path}/include")
-if(WIN32)
-    set(panda3d_import_location "${panda3d_build_outputdir_path}/lib/lib")
-else()
-    set(panda3d_import_location "")
-endif()
 set(panda3d_components p3framework panda pandaexpress p3dtool p3dtoolconfig p3direct p3interrogatedb)
+
+# TODO: for static
+# for shared
+list(GET CMAKE_FIND_LIBRARY_SUFFIXES 0 lib_suffix)
+
 foreach(component_name ${panda3d_components})
-    list(APPEND panda3d_libraries "${panda3d_import_location}${component_name}${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+    list(APPEND panda3d_libraries "${panda3d_build_outputdir_path}/lib/lib${component_name}${lib_suffix}")
 endforeach()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    find_package(Threads REQUIRED)
+endif()
 # ==================================================================================================
 
 # === sources ======================================================================================
@@ -35,5 +39,8 @@ else()
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${panda3d_includes}")
-target_link_libraries(${PROJECT_NAME} PRIVATE ${panda3d_libraries})
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${panda3d_libraries}
+    $<$<PLATFORM_ID:Linux>:Threads::Threads>
+)
 # ==================================================================================================

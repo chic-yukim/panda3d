@@ -16,7 +16,7 @@ if(WIN32)
     set(panda3d_thirdparty_base "" CACHE PATH "The path of thirdparty")
 endif()
 set(panda3d_build_threads "4" CACHE STRINGS "The number of threads")
-set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level")
+set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level (1-4)")
 
 # package options
 option(panda3d_build_everything "Build with everything options" OFF)
@@ -28,14 +28,10 @@ find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
 
 # setup build command
-set(panda3d_build_command ${PYTHON_EXECUTABLE} makepanda/makepanda.py)
-
-# apply options
-set(panda3d_build_command ${panda3d_build_command}
+set(panda3d_build_command ${PYTHON_EXECUTABLE} makepanda/makepanda.py
     --outputdir \"${panda3d_build_outputdir}\"
     --threads ${panda3d_build_threads}
     --optimize ${panda3d_build_optimize}
-    --override PHAVE_MINMAX_H=UNDEF
 )
 
 if(WIN32)
@@ -64,6 +60,7 @@ if(WIN32)
     set(panda3d_build_command ${panda3d_build_command}
         --msvc-version=${panda3d_build_msvc_version}
         --windows-sdk=${panda3d_build_windows_sdk}
+        --override PHAVE_MINMAX_H=UNDEF
     )
 endif()
 
@@ -115,9 +112,14 @@ endif()
 enable_testing()
 add_subdirectory("${PROJECT_SOURCE_DIR}/makepanda/test_cpp")
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(panda3d_build_rpath "PATH=%PATH%;${panda3d_build_outputdir_path}/bin")
+else()
+    set(panda3d_build_rpath "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${panda3d_build_outputdir_path}/lib")
+endif()
+
 add_test(NAME panda3d_test_cpp
-    COMMAND $<TARGET_FILE:panda3d_test>
-    WORKING_DIRECTORY "${panda3d_build_outputdir_path}/bin"
+    COMMAND ${CMAKE_COMMAND} -E env "${panda3d_build_rpath}" $<TARGET_FILE:panda3d_test>
 )
 # ==================================================================================================
 

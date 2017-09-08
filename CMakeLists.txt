@@ -17,12 +17,28 @@ if(WIN32)
 endif()
 set(panda3d_build_threads "4" CACHE STRINGS "The number of threads")
 set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level (1-4)")
+option(panda3d_build_verbose "Verbose" OFF)
 
 # package options
 option(panda3d_build_everything "Build with everything options" OFF)
-set(panda3d_build_default_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
+option(panda3d_build_maya "Build with --use-maya options" OFF)
+option(panda3d_build_max "Build with --use-max options" OFF)
+set(panda3d_build_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
     "openal" "vorbis" "assimp" "egg" "freetype" "pandatool" "sse2"
 )
+
+if(${panda3d_build_maya})
+    set(panda3d_build_packages ${panda3d_build_packages}
+        "maya6" "maya65" "maya7" "maya8" "maya85" "maya2008" "maya2009" "maya2010" "maya2011" "maya2012" "maya2013"
+        "maya20135" "maya2014" "maya2015" "maya2016" "maya20165" "maya2017" #"maya2018"
+    )
+endif()
+
+if(${panda3d_build_max})
+    set(panda3d_build_packages ${panda3d_build_packages}
+        "max6" "max7" "max8" "max9" "max2009" "max2010" "max2011" "max2012" "max2013" "max2014"
+    )
+endif()
 
 find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
@@ -33,6 +49,9 @@ set(panda3d_build_command ${PYTHON_EXECUTABLE} makepanda/makepanda.py
     --threads ${panda3d_build_threads}
     --optimize ${panda3d_build_optimize}
 )
+if(${panda3d_build_verbose})
+    set(panda3d_build_command ${panda3d_build_command} --verbose)
+endif()
 
 if(WIN32)
     if(MSVC_VERSION GREATER 1920)
@@ -69,7 +88,7 @@ if(panda3d_build_everything)
     set(panda3d_build_command ${panda3d_build_command} --everything)
 else()
     set(panda3d_build_command ${panda3d_build_command} --nothing)
-    foreach(pkg_id ${panda3d_build_default_packages})
+    foreach(pkg_id ${panda3d_build_packages})
         set(panda3d_build_command ${panda3d_build_command} --use-${pkg_id})
     endforeach()
 endif()

@@ -1,6 +1,7 @@
 # Panda3D in Develop Branch
 
-[![Build status](https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true)](https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop)
+[![Linux Build Status](https://travis-ci.org/bluekyu/panda3d.svg?branch=develop)](https://travis-ci.org/bluekyu/panda3d)
+[![Windows Build Status](https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true)](https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop)
 
 This **develop** branch is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
 
@@ -27,11 +28,10 @@ And third-party license files are in 'thirdparty-licenses' directory.
 
 
 # Building Panda3D
-
 ## Windows
 
 We currently build using the Microsoft Visual Studio 2015 and 2017 on Windows 10. (default is VS2017.)
-Visual Studio 2015 and 2017 are compatible, so you can use any one.
+Visual Studio 2015 and 2017 are binary compatible, so you can use any one.
 (for example, you can use VS2017 with VS2015 binary version.)
 
 You will also need to have the third-party dependency libraries available for
@@ -40,19 +40,15 @@ depending on whether you are on a 32-bit or 64-bit system:
 https://www.panda3d.org/forums/viewtopic.php?f=9&t=18775
 
 Note that those libraries are VS2015 version, but you can build with VS2017 as the mentioned above.
+OR, you can build from my [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty) repository.
 
-After acquiring these dependencies, you may simply build Panda3D from the
-command prompt using the following command:
+After acquiring these dependencies, you may simply build Panda3D from CMake GUI.
 
-```
-.\build.bat
-```
 
-### Visual Studio 2015
-If you use VS2015, then you need to modify 'build.bat' file as below.
-```
-SET MSVC_VERSION=14
-```
+## Linux
+
+See [README](https://github.com/bluekyu/panda3d) in official repository. OR, you can use CMake.
+
 
 
 # Customizing
@@ -62,6 +58,11 @@ See 'build.bat' file.
 
 
 ## Modified Codes
+### Pull Requested, but Not Merged
+- Support for Visual Studio 2017 (https://github.com/panda3d/panda3d/compare/master...bluekyu:feature/vs2017)
+
+
+
 ### vector_src.h
 Below lines are added.
 ```

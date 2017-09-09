@@ -2,6 +2,11 @@ language: cpp
 
 sudo: false
 
+# blocklist
+branches:
+    except:
+    - master
+
 matrix:
     include:
         - compiler: clang
@@ -54,3 +59,7 @@ script:
     -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR
 - cmake --build . --config $CONFIGURATION --target install
 - popd
+
+notifications:
+    email:
+        on_success: never

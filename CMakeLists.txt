@@ -113,14 +113,26 @@ if(EXISTS "${pdna3d_git_dir_path}")
         message(ERROR "[git-utils] HEAD file does NOT exist in .git directory!")
     endif()
 endif()
+
+# setup environment variables
+if(EXISTS "${panda3d_thirdparty_base}")
+    set(panda3d_build_env MAKEPANDA_THIRDPARTY=\"${panda3d_thirdparty_base}\")
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(panda3d_build_env ${panda3d_build_env}
+        CC=\"${CMAKE_C_COMPILER}\"
+        CXX=\"${CMAKE_CXX_COMPILER}\"
+    )
+endif()
 # ==================================================================================================
 
 # === target =======================================================================================
-if(EXISTS "${panda3d_thirdparty_base}")
-    add_custom_target(panda3d ${CMAKE_COMMAND} -E env
-        MAKEPANDA_THIRDPARTY=\"${panda3d_thirdparty_base}\"
+if(panda3d_build_env)
+    add_custom_target(panda3d ${CMAKE_COMMAND} -E env ${panda3d_build_env}
         ${panda3d_build_command}
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    )
 else()
     add_custom_target(panda3d ${panda3d_build_command} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 endif()

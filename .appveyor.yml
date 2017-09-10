@@ -68,9 +68,8 @@ build:
 build_script:
 - ps: (mkdir _build) -and (pushd _build)
 - cmd: >-
-    cmake -G "%CMAKE_GENERATOR%" -Wno-dev
+    cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
     -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
-    ..
 - cmake --build . --config %CONFIGURATION% --target install
 - ps: popd
 
@@ -81,8 +80,9 @@ after_build:
 #       tests configuration       #
 #---------------------------------#
 
-# to disable automatic tests
-test: off
+# to run your custom scripts instead of automatic tests
+test_script:
+- ctest -C %CONFIGURATION% --output-on-failure
 
 #---------------------------------#
 #      artifacts configuration    #

@@ -58,6 +58,7 @@ script:
     cmake -Wno-dev ..
     -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR
 - cmake --build . --config $CONFIGURATION --target install
+- ctest --output-on-failure
 - popd
 
 notifications:

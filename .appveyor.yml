@@ -82,7 +82,9 @@ after_build:
 
 # to run your custom scripts instead of automatic tests
 test_script:
+- pushd _build
 - ctest -C %CONFIGURATION% --output-on-failure
+- popd
 
 #---------------------------------#
 #      artifacts configuration    #

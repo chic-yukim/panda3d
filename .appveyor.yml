@@ -80,14 +80,10 @@ after_build:
 #       tests configuration       #
 #---------------------------------#
 
-before_test:
-- pushd _build
-
 test_script:
+- ps: pushd _build
 - ctest -C %CONFIGURATION% --output-on-failure
-
-after_test:
-- popd
+- ps: popd
 
 #---------------------------------#
 #      artifacts configuration    #

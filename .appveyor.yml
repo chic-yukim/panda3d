@@ -62,7 +62,7 @@ configuration:
 - Release
 
 build:
-  parallel: true                  # enable MSBuild parallel builds
+    parallel: true                  # enable MSBuild parallel builds
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
@@ -80,10 +80,13 @@ after_build:
 #       tests configuration       #
 #---------------------------------#
 
-# to run your custom scripts instead of automatic tests
-test_script:
+before_test:
 - pushd _build
+
+test_script:
 - ctest -C %CONFIGURATION% --output-on-failure
+
+after_test:
 - popd
 
 #---------------------------------#

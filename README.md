@@ -1,11 +1,25 @@
 # Panda3D in Develop Branch
 
-[![Linux Build Status](https://travis-ci.org/bluekyu/panda3d.svg?branch=develop)](https://travis-ci.org/bluekyu/panda3d)
-[![Windows Build Status](https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true)](https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop)
-
 This **develop** branch is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
 
 In this project, **master** branch is used to track upstream (https://github.com/panda3d/panda3d)
+
+
+
+## Build Status
+
+| OS       | Build Status | Latest Build |
+| :------: | :----------: | :----------: |
+| Windows  | [![win-badge]][win-link] | [vc14][win-download] |
+| Linux    | [![nix-badge]][nix-link] |  |
+
+[win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true "AppVeyor build status"
+[win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop "AppVeyor build link"
+[win-download]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.zip?branch=develop "Download latest build"
+[nix-badge]: https://travis-ci.org/bluekyu/panda3d.svg?branch=develop "Travis build status"
+[nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
+
+**Note**: These builds are default builds, not everything. So, some files may be omitted.
 
 
 

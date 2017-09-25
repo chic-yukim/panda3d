@@ -15,7 +15,7 @@ In this project, **master** branch is used to track upstream (https://github.com
 
 [win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true "AppVeyor build status"
 [win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop "AppVeyor build link"
-[win-download]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.zip?branch=develop "Download latest build"
+[win-download]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=develop "Download latest build"
 [nix-badge]: https://travis-ci.org/bluekyu/panda3d.svg?branch=develop "Travis build status"
 [nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
 

@@ -99,7 +99,9 @@ artifacts:
 # on successful build
 on_success:
 - ps: >-
-    Start-AppveyorBuild -ApiKey $env:api_key -ProjectSlug 'render-pipeline-cpp' -EnvironmentVariables @{
-        TRIGGER_NAME = $env:TRIGGER_NAME
-        TRIGGER_COMMIT = $env:TRIGGER_COMMIT
+    if ($env:APPVEYOR_REPO_BRANCH -eq "develop") {
+        Start-AppveyorBuild -ApiKey $env:api_key -ProjectSlug 'render-pipeline-cpp' -EnvironmentVariables @{
+            TRIGGER_NAME = $env:TRIGGER_NAME
+            TRIGGER_COMMIT = $env:TRIGGER_COMMIT
+        }
     }

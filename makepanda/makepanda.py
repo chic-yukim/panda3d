@@ -3154,7 +3154,6 @@ if (PkgSkip("DIRECT")==0):
     CopyAllHeaders('direct/src/distributed')
     CopyAllHeaders('direct/src/interval')
     CopyAllHeaders('direct/src/showbase')
-    CopyAllHeaders('direct/metalibs/direct')
     CopyAllHeaders('direct/src/dcparse')
 
 if (RUNTIME or RTDIST):
@@ -3623,6 +3622,7 @@ if (not RUNTIME):
   TargetAdd('p3event_composite2.obj', opts=OPTS, input='p3event_composite2.cxx')
 
   OPTS=['DIR:panda/src/event', 'PYTHON']
+  TargetAdd('p3event_asyncTask_ext.obj', opts=OPTS, input='asyncTask_ext.cxx')
   TargetAdd('p3event_pythonTask.obj', opts=OPTS, input='pythonTask.cxx')
   IGATEFILES=GetDirectoryContents('panda/src/event', ["*.h", "*_composite*.cxx"])
   TargetAdd('libp3event.in', opts=OPTS, input=IGATEFILES)
@@ -4216,6 +4216,7 @@ if (not RUNTIME):
   TargetAdd('core.pyd', input='p3pipeline_pythonThread.obj')
   TargetAdd('core.pyd', input='p3putil_ext_composite.obj')
   TargetAdd('core.pyd', input='p3pnmimage_pfmFile_ext.obj')
+  TargetAdd('core.pyd', input='p3event_asyncTask_ext.obj')
   TargetAdd('core.pyd', input='p3event_pythonTask.obj')
   TargetAdd('core.pyd', input='p3gobj_ext_composite.obj')
   TargetAdd('core.pyd', input='p3pgraph_ext_composite.obj')
@@ -5219,10 +5220,6 @@ if (PkgSkip("DIRECT")==0):
 #
 
 if (PkgSkip("DIRECT")==0):
-  OPTS=['DIR:direct/metalibs/direct', 'BUILDING:DIRECT']
-  TargetAdd('p3direct_direct.obj', opts=OPTS, input='direct.cxx')
-
-  TargetAdd('libp3direct.dll', input='p3direct_direct.obj')
   TargetAdd('libp3direct.dll', input='p3directbase_directbase.obj')
   TargetAdd('libp3direct.dll', input='p3showbase_showBase.obj')
   if GetTarget() == 'darwin':
@@ -5234,7 +5231,7 @@ if (PkgSkip("DIRECT")==0):
   TargetAdd('libp3direct.dll', input=COMMON_PANDA_LIBS)
   TargetAdd('libp3direct.dll', opts=['ADVAPI',  'OPENSSL', 'WINUSER', 'WINGDI'])
 
-  OPTS=['DIR:direct/metalibs/direct', 'PYTHON']
+  OPTS=['PYTHON']
   TargetAdd('direct_module.obj', input='libp3dcparser.in')
   TargetAdd('direct_module.obj', input='libp3showbase.in')
   TargetAdd('direct_module.obj', input='libp3deadrec.in')

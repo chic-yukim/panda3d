@@ -12,9 +12,11 @@ from distutils import sysconfig
 if sys.version_info >= (3, 0):
     import pickle
     import _thread as thread
+    import configparser
 else:
     import cPickle as pickle
     import thread
+    import ConfigParser as configparser
 
 SUFFIX_INC = [".cxx",".cpp",".c",".h",".I",".yxx",".lxx",".mm",".rc",".r"]
 SUFFIX_DLL = [".dll",".dlo",".dle",".dli",".dlm",".mll",".exe",".pyd",".ocx"]
@@ -932,6 +934,17 @@ def GetProgramFiles():
     elif (os.path.isdir("E:\\Program Files")):
         return "E:\\Program Files"
     return 0
+
+def GetProgramFiles_x86():
+    if ("ProgramFiles(x86)" in os.environ):
+        return os.environ["ProgramFiles(x86)"]
+    elif (os.path.isdir("C:\\Program Files (x86)")):
+        return "C:\\Program Files (x86)"
+    elif (os.path.isdir("D:\\Program Files (x86)")):
+        return "D:\\Program Files (x86)"
+    elif (os.path.isdir("E:\\Program Files (x86)")):
+        return "E:\\Program Files (x86)"
+    return GetProgramFiles()
 
 ########################################################################
 ##
@@ -2063,29 +2076,37 @@ def SdkLocateVisualStudio(version=(10,0)):
         exit("Couldn't get Visual Studio infomation with MSVC %s.%s version." % version)
 
     vsversion = msvcinfo["vsversion"]
+    vsversion_str = "%s.%s" % vsversion
+    version_str = "%s.%s" % version
 
     # try to use vswhere.exe
-    vswhere_path = None
-    if LocateBinary("vswhere"):
-        vswhere_path = "vswhere.exe"
-    else:
-        vswhere_path = "%s\\Microsoft Visual Studio\\Installer\\vswhere.exe" % os.environ["ProgramFiles(x86)"]
+    vswhere_path = LocateBinary("vswhere.exe")
+    if not vswhere_path:
+        if sys.platform == 'cygwin':
+            vswhere_path = "/cygdrive/c/Program Files/Microsoft Visual Studio/Installer/vswhere.exe"
+        else:
+            vswhere_path = "%s\\Microsoft Visual Studio\\Installer\\vswhere.exe" % GetProgramFiles()
+        if not os.path.isfile(vswhere_path):
+            vswhere_path = None
+
+    if not vswhere_path:
+        if sys.platform == 'cygwin':
+            vswhere_path = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe"
+        else:
+            vswhere_path = "%s\\Microsoft Visual Studio\\Installer\\vswhere.exe" % GetProgramFiles_x86()
         if not os.path.isfile(vswhere_path):
             vswhere_path = None
 
     vsdir = 0
     if vswhere_path:
-        min_vsversion = "%s.%s" % vsversion
+        min_vsversion = vsversion_str
         max_vsversion = "%s.%s" % (vsversion[0]+1, 0)
-        vswhere_cmd = [vswhere_path, "-legacy", "-property", "installationPath",
+        vswhere_cmd = ["vswhere.exe", "-legacy", "-property", "installationPath",
             "-version", "[{},{})".format(min_vsversion, max_vsversion)]
-        handle = subprocess.Popen(vswhere_cmd, shell=True, stdout=subprocess.PIPE)
+        handle = subprocess.Popen(vswhere_cmd, executable=vswhere_path, stdout=subprocess.PIPE)
         found_paths = handle.communicate()[0].splitlines()
         if found_paths:
             vsdir = found_paths[0].decode("utf-8") + "\\"
-
-    vsversion_str = "%s.%s" % vsversion
-    version_str = "%s.%s" % version
 
     # try to use registry
     if (vsdir == 0):
@@ -2532,7 +2553,7 @@ def SetupVisualStudioEnviron():
 
     # Targeting the 7.1 SDK (which is the only way to have Windows XP support)
     # with Visual Studio 2015 requires use of the Universal CRT.
-    if winsdk_ver == '7.1' and SDK["VISUALSTUDIO_VERSION"] == (14,0):
+    if winsdk_ver == '7.1' and SDK["VISUALSTUDIO_VERSION"] >= (14,0):
         win_kit = GetRegistryKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", "KitsRoot10")
 
         # Fallback in case we can't read the registry.
@@ -2927,6 +2948,22 @@ def CopyPythonTree(dstdir, srcdir, lib2to3_fixers=[], threads=0):
 ##
 ########################################################################
 
+cfg_parser = None
+
+def GetMetadataValue(key):
+    global cfg_parser
+    if not cfg_parser:
+        # Parse the metadata from the setup.cfg file.
+        cfg_parser = configparser.ConfigParser()
+        path = os.path.join(os.path.dirname(__file__), '..', 'setup.cfg')
+        assert cfg_parser.read(path), "Could not read setup.cfg file."
+
+    value = cfg_parser.get('metadata', key)
+    if key == 'classifiers':
+        value = value.strip().split('\n')
+    return value
+
+# This function is being phased out.
 def ParsePandaVersion(fn):
     try:
         f = open(fn, "r")

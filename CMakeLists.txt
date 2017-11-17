@@ -23,9 +23,14 @@ option(panda3d_build_verbose "Verbose" OFF)
 option(panda3d_build_everything "Build with everything options" OFF)
 option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
-set(panda3d_build_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
-    "openal" "vorbis" "assimp" "egg" "freetype" "pandatool" "sse2"
-)
+option(panda3d_disable_minmax "Set 'PHAVE_MINMAX_H=UNDEF'" ON)
+
+set(panda3d_build_packages "direct" "gl" "eigen" "pandatool" "sse2")
+if(${panda3d_build_optimize} GREATER_EQUAL "3")
+    set(panda3d_build_packages ${panda3d_build_packages} "zlib" "png" "jpeg" "squish"
+        "openal" "vorbis" "assimp" "egg" "freetype"
+    )
+endif()
 
 if(${panda3d_build_maya})
     set(panda3d_build_packages ${panda3d_build_packages}
@@ -79,8 +84,11 @@ if(WIN32)
     set(panda3d_build_command ${panda3d_build_command}
         --msvc-version=${panda3d_build_msvc_version}
         --windows-sdk=${panda3d_build_windows_sdk}
-        --override PHAVE_MINMAX_H=UNDEF
     )
+
+    if(panda3d_disable_minmax)
+        set(panda3d_build_command ${panda3d_build_command} --override PHAVE_MINMAX_H=UNDEF)
+    endif()
 endif()
 
 # apply package options

@@ -39,6 +39,13 @@ environment:
     MAKEPANDA_THIRDPARTY: C:/projects/_install/panda3d-thirdparty
     PATH: C:\Python36-x64;%PATH%
 
+    matrix:
+        # Release
+        - PANDA3D_BUILD_OPTIMIZE: 4
+
+        # Debug
+        - PANDA3D_BUILD_OPTIMIZE: 1
+
 # scripts that run after cloning repository
 install:
 - ps: (mkdir C:\projects\_install) -and (pushd C:\projects\_install)
@@ -60,6 +67,7 @@ platform: x64
 # build Configuration, i.e. Debug, Release, etc.
 configuration:
 - Release
+- Debug
 
 build:
     parallel: true                  # enable MSBuild parallel builds
@@ -70,6 +78,7 @@ build_script:
 - cmd: >-
     cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
     -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
+    -Dpanda3d_build_optimize=%PANDA3D_BUILD_OPTIMIZE%
 - cmake --build . --config %CONFIGURATION% --target install
 - ps: popd
 
@@ -93,13 +102,19 @@ artifacts:
 - path: panda3d.7z
 
 #---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+deploy: off
+
+#---------------------------------#
 #        global handlers          #
 #---------------------------------#
 
 # on successful build
 on_success:
 - ps: >-
-    if ($env:APPVEYOR_REPO_BRANCH -eq "develop") {
+    if (($env:CONFIGURATION -eq "Release") -and ($env:APPVEYOR_REPO_BRANCH -eq "develop")) {
         Start-AppveyorBuild -ApiKey $env:api_key -ProjectSlug 'render-pipeline-cpp' -EnvironmentVariables @{
             TRIGGER_NAME = $env:TRIGGER_NAME
             TRIGGER_COMMIT = $env:TRIGGER_COMMIT

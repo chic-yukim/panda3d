@@ -73,6 +73,7 @@ build_script:
     cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
     -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
     -Dpanda3d_build_optimize=1
+    -Dpanda3d_build_threads=2
     ) else (
     cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
     -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"

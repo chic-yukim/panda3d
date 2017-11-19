@@ -39,13 +39,6 @@ environment:
     MAKEPANDA_THIRDPARTY: C:/projects/_install/panda3d-thirdparty
     PATH: C:\Python36-x64;%PATH%
 
-    matrix:
-        # Release
-        - PANDA3D_BUILD_OPTIMIZE: 4
-
-        # Debug
-        - PANDA3D_BUILD_OPTIMIZE: 1
-
 # scripts that run after cloning repository
 install:
 - ps: (mkdir C:\projects\_install) -and (pushd C:\projects\_install)
@@ -66,8 +59,8 @@ platform: x64
 
 # build Configuration, i.e. Debug, Release, etc.
 configuration:
-- Release
 - Debug
+- Release
 
 build:
     parallel: true                  # enable MSBuild parallel builds
@@ -76,9 +69,14 @@ build:
 build_script:
 - ps: (mkdir _build) -and (pushd _build)
 - cmd: >-
+    if "%CONFIGURATION%"=="Debug" (
     cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
     -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
-    -Dpanda3d_build_optimize=%PANDA3D_BUILD_OPTIMIZE%
+    -Dpanda3d_build_optimize=1
+    ) else (
+    cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
+    -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
+    )
 - cmake --build . --config %CONFIGURATION% --target install
 - ps: popd
 

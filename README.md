@@ -8,18 +8,21 @@ In this project, **master** branch is used to track upstream (https://github.com
 
 ## Build Status
 
-| OS       | Build Status | Latest Build |
-| :------: | :----------: | :----------: |
-| Windows  | [![win-badge]][win-link] | [vc14][win-download] |
-| Linux    | [![nix-badge]][nix-link] |  |
+| OS       | Build Status             | Latest Build                                      |
+| :------: | :----------------------: | :-----------------------------------------------: |
+| Windows  | [![win-badge]][win-link] | vc14 ([Debug][win-debug], [Release][win-release]) |
+| Linux    | [![nix-badge]][nix-link] |                                                   |
 
 [win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true "AppVeyor build status"
 [win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop "AppVeyor build link"
-[win-download]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=develop "Download latest build"
+[win-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=develop&job=Configuration%3A+Debug "Download latest build (Debug)"
+[win-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=develop&job=Configuration%3A+Release "Download latest build (Release)"
 [nix-badge]: https://travis-ci.org/bluekyu/panda3d.svg?branch=develop "Travis build status"
 [nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
 
 **Note**: These builds are default builds, not everything. So, some files may be omitted.
+- Windows Debug: Optimize option is 1 and 'assimp' library is omitted.
+- Windows Release: Optimize option is 4.
 
 
 

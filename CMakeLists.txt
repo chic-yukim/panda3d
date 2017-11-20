@@ -7,6 +7,12 @@ project(panda3d)
 # === configure ====================================================================================
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
 
+include(ProcessorCount)
+ProcessorCount(process_count)
+if(process_count EQUAL 0)
+    set(process_count "1")
+endif()
+
 get_filename_component(panda3d_build_outputdir ${PROJECT_BINARY_DIR} NAME)
 set(panda3d_build_outputdir "${panda3d_build_outputdir}-built")
 set(panda3d_build_outputdir_path "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdir}")
@@ -15,7 +21,7 @@ set(panda3d_build_outputdir_path "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdi
 if(WIN32)
     set(panda3d_thirdparty_base "" CACHE PATH "The path of thirdparty")
 endif()
-set(panda3d_build_threads "4" CACHE STRINGS "The number of threads")
+set(panda3d_build_threads "${process_count}" CACHE STRINGS "The number of threads")
 set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level (1-4)")
 option(panda3d_build_verbose "Verbose" OFF)
 

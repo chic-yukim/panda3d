@@ -21,7 +21,7 @@ In this project, **master** branch is used to track upstream (https://github.com
 [nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
 
 **Note**: These builds are default builds, not everything. So, some files may be omitted.
-- Windows Debug: Optimize option is 1 and 'assimp' library is omitted.
+- Windows Debug: Optimize option is 1 and 'assimp' and 'OpenEXR' library is omitted.
 - Windows Release: Optimize option is 4.
 
 

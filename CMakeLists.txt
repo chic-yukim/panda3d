@@ -31,12 +31,11 @@ option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
 option(panda3d_disable_minmax "Set 'PHAVE_MINMAX_H=UNDEF'" ON)
 
-set(panda3d_build_packages "direct" "gl" "eigen" "zlib" "png" "jpeg" "squish"
-    "openal" "vorbis" "egg" "freetype" "pandatool" "sse2"
+set(panda3d_build_packages "direct" "gl" "eigen" "openal" "vorbis" "zlib" "png" "jpeg" "tiff"
+    "squish" "egg" "freetype" "directcam" "vision" "pandatool" "sse2"
 )
 if(${panda3d_build_optimize} GREATER_EQUAL "3")
-    set(panda3d_build_packages ${panda3d_build_packages} "assimp"
-    )
+    set(panda3d_build_packages ${panda3d_build_packages} "openexr" "assimp")
 endif()
 
 if(${panda3d_build_maya})

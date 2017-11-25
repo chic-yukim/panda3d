@@ -20,8 +20,9 @@ In this project, **master** branch is used to track upstream (https://github.com
 [nix-badge]: https://travis-ci.org/bluekyu/panda3d.svg?branch=develop "Travis build status"
 [nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
 
-**Note**: These builds are default builds, not everything. So, some files may be omitted.
-- Windows Debug: Optimize option is 1 and 'assimp' and 'OpenEXR' library is omitted.
+##### Note
+- These builds are default builds, not everything. So, some files may be omitted.
+- Windows Debug: Optimize option is 1.
 - Windows Release: Optimize option is 4.
 
 
@@ -41,6 +42,8 @@ And third-party license files are in 'thirdparty-licenses' directory.
 - libsquish: MIT
 - Freetype: FreeType
 - Assimp: assimp
+- OpenEXR: Modified BSD
+- libtiff: BSD-like licence
 
 
 

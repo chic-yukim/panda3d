@@ -39,10 +39,19 @@ environment:
     MAKEPANDA_THIRDPARTY: C:/projects/_install/panda3d-thirdparty
     PATH: C:\Python36-x64;%PATH%
 
+# this is how to allow failing jobs in the matrix
+matrix:
+    fast_finish: true   # set this flag to immediately finish build once one of the jobs fails.
+
 # scripts that run after cloning repository
 install:
 - ps: (mkdir C:\projects\_install) -and (pushd C:\projects\_install)
-- ps: Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=develop'
+- ps: >-
+    if ($env:CONFIGURATION -eq "Debug") {
+        Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=develop&job=Configuration%3A+MixForDebug'
+    } else {
+        Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=develop&job=Configuration%3A+Release'
+    }
 - 7z x -y panda3d-thirdparty.7z > nul
 - ps: popd
 

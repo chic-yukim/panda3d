@@ -29,20 +29,25 @@ option(panda3d_build_verbose "Verbose" OFF)
 option(panda3d_build_everything "Build with everything options" OFF)
 option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
+option(panda3d_build_python "Build with --use-python options" OFF)
 option(panda3d_disable_minmax "Set 'PHAVE_MINMAX_H=UNDEF'" ON)
 
 set(panda3d_build_packages "direct" "gl" "eigen" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
     "squish" "assimp" "egg" "freetype" "directcam" "vision" "pandatool" "sse2"
 )
 
-if(${panda3d_build_maya})
+if(panda3d_build_python)
+    set(panda3d_build_packages ${panda3d_build_packages} "python")
+endif()
+
+if(panda3d_build_maya)
     set(panda3d_build_packages ${panda3d_build_packages}
         "maya6" "maya65" "maya7" "maya8" "maya85" "maya2008" "maya2009" "maya2010" "maya2011" "maya2012" "maya2013"
         "maya20135" "maya2014" "maya2015" "maya2016" "maya20165" "maya2017" #"maya2018"
     )
 endif()
 
-if(${panda3d_build_max})
+if(panda3d_build_max)
     set(panda3d_build_packages ${panda3d_build_packages}
         "max6" "max7" "max8" "max9" "max2009" "max2010" "max2011" "max2012" "max2013" "max2014"
     )

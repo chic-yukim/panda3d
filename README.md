@@ -43,7 +43,7 @@ And third-party license files are in 'thirdparty-licenses' directory.
 - Freetype: FreeType
 - Assimp: assimp
 - OpenEXR: Modified BSD
-- libtiff: BSD-like licence
+- libtiff: libtiff
 
 
 

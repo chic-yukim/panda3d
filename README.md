@@ -21,9 +21,9 @@ In this project, **master** branch is used to track upstream (https://github.com
 [nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
 
 ##### Note
-- These builds are default builds, not everything. So, some files may be omitted.
-- Windows Debug: Optimize option is 1.
-- Windows Release: Optimize option is 4.
+- These builds are own CMake builds, not everything. So, some files may be omitted.
+- Windows Debug: Optimize option is 1 with Release in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
+- Windows Release: Optimize option is 4 with MixForDebug in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
 
 
 
@@ -73,18 +73,11 @@ See [README](https://github.com/bluekyu/panda3d) in official repository. OR, you
 
 # Customizing
 
-## Build Command
-See 'build.bat' file.
-
-
 ## Modified Codes
-### Pull Requested, but Not Merged
-- Support for Visual Studio 2017 (https://github.com/panda3d/panda3d/compare/master...bluekyu:feature/vs2017)
-
-
 
 ### vector_src.h
-Below lines are added.
+Below lines are added to avoid error by template specialization.
+Without this, you need to include `vector_*.h` files to use some vector<> type.
 ```
 #undef EXPCL
 #undef EXPTP

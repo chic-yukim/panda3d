@@ -7,6 +7,8 @@ project(panda3d)
 # === configure ====================================================================================
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)    # Project Grouping
 
+include(cmake/git-utils.cmake)
+
 include(ProcessorCount)
 ProcessorCount(process_count)
 if(process_count EQUAL 0)
@@ -14,7 +16,7 @@ if(process_count EQUAL 0)
 endif()
 
 get_filename_component(panda3d_build_outputdir ${PROJECT_BINARY_DIR} NAME)
-set(panda3d_build_outputdir "${panda3d_build_outputdir}-built")
+set(panda3d_build_outputdir "built-${panda3d_build_outputdir}")
 set(panda3d_build_outputdir_path "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdir}")
 
 # cache options
@@ -109,25 +111,10 @@ else()
     endforeach()
 endif()
 
-set(pdna3d_git_dir_path "${PROJECT_SOURCE_DIR}/.git")
-if(EXISTS "${pdna3d_git_dir_path}")
-    if(EXISTS "${pdna3d_git_dir_path}/HEAD")
-        file(STRINGS "${pdna3d_git_dir_path}/HEAD" panda3d_git_HEAD_contents)
-        string(REGEX MATCH "^[0-9a-f]+$" panda3d_git_HEAD_hash ${panda3d_git_HEAD_contents})
-        if(NOT panda3d_git_HEAD_hash)
-            string(REGEX REPLACE "^ref: (.*)$" "\\1" panda3d_git_HEAD_ref_path ${panda3d_git_HEAD_contents})
-            file(STRINGS "${pdna3d_git_dir_path}/${panda3d_git_HEAD_ref_path}" panda3d_git_HEAD_hash)
-        endif()
-
-        if(panda3d_git_HEAD_hash)
-            message(STATUS "[panda3d] git-commit: ${panda3d_git_HEAD_hash}")
-            set(panda3d_build_command ${panda3d_build_command} --git-commit ${panda3d_git_HEAD_hash})
-        else()
-            message(WARNING "[panda3d] Cannot find git-commit hash.")
-        endif()
-    else()
-        message(ERROR "[git-utils] HEAD file does NOT exist in .git directory!")
-    endif()
+get_git_head_hash(${CMAKE_CURRENT_SOURCE_DIR} panda3d_GIT_COMMIT)
+if (panda3d_GIT_COMMIT)
+    message("[panda3d] git commit: ${panda3d_GIT_COMMIT}")
+    set(panda3d_build_command ${panda3d_build_command} --git-commit ${panda3d_GIT_COMMIT})
 endif()
 
 # setup environment variables

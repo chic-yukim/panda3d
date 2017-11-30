@@ -38,6 +38,7 @@ vgcore.*
 /*.txz
 
 # CMake
+/_build
 /build/
 CMakeCache.txt
 CMakeFiles/

@@ -48,9 +48,9 @@ install:
 - ps: (mkdir C:\projects\_install) -and (pushd C:\projects\_install)
 - ps: >-
     if ($env:CONFIGURATION -eq "Debug") {
-        Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=develop&job=Configuration%3A+MixForDebug'
+        Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Configuration%3A+MixForDebug'
     } else {
-        Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=develop&job=Configuration%3A+Release'
+        Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Configuration%3A+Release'
     }
 - 7z x -y panda3d-thirdparty.7z > nul
 - ps: popd
@@ -122,7 +122,7 @@ deploy: off
 # on successful build
 on_success:
 - ps: >-
-    if (($env:CONFIGURATION -eq "Release") -and ($env:APPVEYOR_REPO_BRANCH -eq "develop")) {
+    if (($env:CONFIGURATION -eq "Release") -and ($env:APPVEYOR_REPO_BRANCH -eq "master")) {
         Start-AppveyorBuild -ApiKey $env:api_key -ProjectSlug 'render-pipeline-cpp' -EnvironmentVariables @{
             TRIGGER_NAME = $env:TRIGGER_NAME
             TRIGGER_COMMIT = $env:TRIGGER_COMMIT

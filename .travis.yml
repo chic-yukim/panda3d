@@ -2,11 +2,6 @@ language: cpp
 
 sudo: false
 
-# blocklist
-branches:
-    except:
-    - master
-
 matrix:
     include:
         - compiler: clang

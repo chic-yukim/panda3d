@@ -1,8 +1,6 @@
-# Panda3D in Develop Branch
+# Panda3D for Render Pipeline C++
 
-This **develop** branch is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
-
-In this project, **master** branch is used to track upstream (https://github.com/panda3d/panda3d)
+This repository is used to develop [Render Pipeline C++](https://github.com/bluekyu/render_pipeline_cpp)
 
 
 
@@ -13,11 +11,11 @@ In this project, **master** branch is used to track upstream (https://github.com
 | Windows  | [![win-badge]][win-link] | vc14 ([Debug][win-debug], [Release][win-release]) |
 | Linux    | [![nix-badge]][nix-link] |                                                   |
 
-[win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/develop?svg=true "AppVeyor build status"
-[win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/develop "AppVeyor build link"
-[win-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=develop&job=Configuration%3A+Debug "Download latest build (Debug)"
-[win-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=develop&job=Configuration%3A+Release "Download latest build (Release)"
-[nix-badge]: https://travis-ci.org/bluekyu/panda3d.svg?branch=develop "Travis build status"
+[win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
+[win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"
+[win-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Debug "Download latest build (Debug)"
+[win-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Release "Download latest build (Release)"
+[nix-badge]: https://travis-ci.org/bluekyu/panda3d.svg?branch=master "Travis build status"
 [nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
 
 ##### Note

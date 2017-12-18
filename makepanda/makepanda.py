@@ -1096,6 +1096,10 @@ def CompileCxx(obj,src,opts):
             if SDK.get("VISUALSTUDIO_VERSION") >= (14,0):
                 cmd += "/Zc:threadSafeInit- "
 
+            # resolve c4566 warning
+            if SDK.get("VISUALSTUDIO_VERSION") >= (14,0):
+                cmd += "/utf-8 "
+
             cmd += "/Fo" + obj + " /nologo /c"
             if GetTargetArch() != 'x64' and (not PkgSkip("SSE2") or 'SSE2' in opts):
                 cmd += " /arch:SSE2"

@@ -389,6 +389,10 @@ class ShowBase(DirectObject.DirectObject):
             builtins.aspect2dp = self.aspect2dp
             builtins.pixel2dp = self.pixel2dp
 
+        # Now add this instance to the ShowBaseGlobal module scope.
+        from . import ShowBaseGlobal
+        ShowBaseGlobal.base = self
+
         if self.__dev__:
             ShowBase.notify.debug('__dev__ == %s' % self.__dev__)
         else:
@@ -514,6 +518,9 @@ class ShowBase(DirectObject.DirectObject):
             del builtins.base
             del builtins.loader
             del builtins.taskMgr
+            ShowBaseGlobal = sys.modules.get('direct.showbase.ShowBaseGlobal', None)
+            if ShowBaseGlobal:
+                del ShowBaseGlobal.base
 
         # [gjeon] restore sticky key settings
         if self.config.GetBool('disable-sticky-keys', 0):
@@ -1260,8 +1267,7 @@ class ShowBase(DirectObject.DirectObject):
         if win == None:
             win = self.win
 
-        if win != None and win.getSideBySideStereo() and \
-                win.hasSize() and win.getSbsLeftYSize() != 0:
+        if win != None and win.hasSize() and win.getSbsLeftYSize() != 0:
             aspectRatio = float(win.getSbsLeftXSize()) / float(win.getSbsLeftYSize())
         else:
             if win == None or not hasattr(win, "getRequestedProperties"):
@@ -2726,9 +2732,10 @@ class ShowBase(DirectObject.DirectObject):
             # changed and update the camera lenses and aspect2d parameters
             self.adjustWindowAspectRatio(self.getAspectRatio())
 
-            if win.getSideBySideStereo() and win.hasSize() and win.getSbsLeftYSize() != 0:
+            if win.hasSize() and win.getSbsLeftYSize() != 0:
                 self.pixel2d.setScale(2.0 / win.getSbsLeftXSize(), 1.0, 2.0 / win.getSbsLeftYSize())
-                self.pixel2dp.setScale(2.0 / win.getSbsLeftXSize(), 1.0, 2.0 / win.getSbsLeftYSize())
+                if self.wantRender2dp:
+                    self.pixel2dp.setScale(2.0 / win.getSbsLeftXSize(), 1.0, 2.0 / win.getSbsLeftYSize())
             else:
                 xsize, ysize = self.getSize()
                 if xsize > 0 and ysize > 0:

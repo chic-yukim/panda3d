@@ -33,6 +33,7 @@ option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
 option(panda3d_build_python "Build with --use-python options" OFF)
 option(panda3d_disable_minmax "Set 'PHAVE_MINMAX_H=UNDEF'" ON)
+option(panda3d_enable_pstats "Set 'DO_PSTATS=1'" OFF)
 
 set(panda3d_build_packages "direct" "gl" "eigen" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
     "squish" "assimp" "egg" "freetype" "directcam" "vision" "pandatool" "sse2"
@@ -98,6 +99,10 @@ if(WIN32)
 
     if(panda3d_disable_minmax)
         set(panda3d_build_command ${panda3d_build_command} --override PHAVE_MINMAX_H=UNDEF)
+    endif()
+
+    if(panda3d_enable_pstats)
+        set(panda3d_build_command ${panda3d_build_command} --override DO_PSTATS=1)
     endif()
 endif()
 

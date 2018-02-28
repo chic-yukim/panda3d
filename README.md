@@ -20,8 +20,8 @@ This repository is used to develop [Render Pipeline C++](https://github.com/blue
 
 ##### Note
 - These builds are own CMake builds, not everything. So, some files may be omitted.
-- Windows Debug: Optimize option is 1 with Release in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
-- Windows Release: Optimize option is 4 with MixForDebug in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
+- Windows Debug: Optimize option is 1 with MixForDebug in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
+- Windows Release: Optimize option is 4 with Release in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
 
 
 

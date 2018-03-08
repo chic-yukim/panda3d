@@ -36,7 +36,7 @@ option(panda3d_disable_minmax "Set 'PHAVE_MINMAX_H=UNDEF'" ON)
 option(panda3d_enable_pstats "Set 'DO_PSTATS=1'" OFF)
 
 set(panda3d_build_packages "direct" "gl" "eigen" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
-    "squish" "assimp" "egg" "freetype" "directcam" "vision" "pandatool" "sse2"
+    "squish" "assimp" "egg" "freetype" "harfbuzz" "directcam" "vision" "pandatool" "sse2"
 )
 
 if(panda3d_build_python)

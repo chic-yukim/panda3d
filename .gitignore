@@ -39,6 +39,7 @@ vgcore.*
 
 # CMake
 /_build
+/.vs
 /build/
 CMakeCache.txt
 CMakeFiles/

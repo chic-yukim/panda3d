@@ -23,7 +23,7 @@ clone_folder: c:\projects\panda3d
 init:
 - ps: >-
     if (Test-Path env:TRIGGER_NAME) {
-        Update-AppveyorBuild -Message "Build from $env:TRIGGER_BUILD_VERSION in $env:TRIGGER_NAME"
+        Update-AppveyorBuild -Message "Build by $env:TRIGGER_BUILD_VERSION in $env:TRIGGER_NAME"
     }
 - git --version
 - python --version

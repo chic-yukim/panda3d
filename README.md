@@ -9,14 +9,11 @@ This repository is used to develop [Render Pipeline C++](https://github.com/blue
 | OS       | Build Status             | Latest Build                                      |
 | :------: | :----------------------: | :-----------------------------------------------: |
 | Windows  | [![win-badge]][win-link] | vc14 ([Debug][win-debug], [Release][win-release]) |
-| Linux    | [![nix-badge]][nix-link] |                                                   |
 
 [win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
 [win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"
 [win-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Debug "Download latest build (Debug)"
 [win-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Release "Download latest build (Release)"
-[nix-badge]: https://travis-ci.org/bluekyu/panda3d.svg?branch=master "Travis build status"
-[nix-link]: https://travis-ci.org/bluekyu/panda3d "Travis build link"
 
 ##### Note
 - These builds are own CMake builds, not everything. So, some files may be omitted.
@@ -60,12 +57,11 @@ https://www.panda3d.org/forums/viewtopic.php?f=9&t=18775
 Note that those libraries are VS2015 version, but you can build with VS2017 as the mentioned above.
 OR, you can build from my [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty) repository.
 
-After acquiring these dependencies, you may simply build Panda3D from CMake GUI.
-
+After acquiring these dependencies, you may simply build Panda3D from CMake.
 
 ## Linux
 
-See [README](https://github.com/bluekyu/panda3d) in official repository. OR, you can use CMake.
+See [README](https://github.com/panda3d/panda3d) in official repository. OR, you can use CMake.
 
 
 

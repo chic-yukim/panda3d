@@ -79,31 +79,10 @@ Without this, you need to include `vector_*.h` files to use some vector<> type.
 #define EXPTP
 ```
 
-### dtoolbase.h
-In order to use Boost above 1.60
-(Use Windows Vista/Windows Server 2008 API version)
-```
-//#define _WIN32_WINNT 0x0502   // original code
-#define _WIN32_WINNT 0x0600
-```
-
-### makepanda.py
-```
-/DWINVER=0x600
-```
 
 ### dtoolbase_cc.h
 Move `DEFAULT_CTOR` macro to the block of Visual Studio 2015.
 ```
 #elif defined(_MSC_VER) && _MSC_VER >= 1900 // Visual Studio 2015
 #  define DEFAULT_CTOR = default
-```
-
-
-### Third-party
-#### fcollada
-In FCollada/FUtils/Platforms.h, modify below to use Boost above 1.60
-(Use Windows Vista/Windows Server 2008 API version)
-```
-#define _WIN32_WINNT 0x0600
 ```

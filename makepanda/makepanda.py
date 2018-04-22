@@ -1106,8 +1106,8 @@ def CompileCxx(obj,src,opts):
                 cmd += "/favor:blend "
             cmd += "/wd4996 /wd4275 /wd4273 "
 
-            # We target Windows Vista.
-            cmd += "/DWINVER=0x600 "
+            # We still target Windows XP.
+            cmd += "/DWINVER=0x501 "
             # Work around a WinXP/2003 bug when using VS 2015+.
             if SDK.get("VISUALSTUDIO_VERSION") >= (14,0):
                 cmd += "/Zc:threadSafeInit- "
@@ -1165,7 +1165,7 @@ def CompileCxx(obj,src,opts):
             if GetTargetArch() == 'x64':
                 cmd += "/favor:blend "
             cmd += "/wd4996 /wd4275 /wd4267 /wd4101 /wd4273 "
-            cmd += "/DWINVER=0x600 "
+            cmd += "/DWINVER=0x501 "
             cmd += "/Fo" + obj + " /c"
             for x in ipath: cmd += " /I" + x
             for (opt,dir) in INCDIRECTORIES:

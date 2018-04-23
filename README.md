@@ -69,17 +69,6 @@ See [README](https://github.com/panda3d/panda3d) in official repository. OR, you
 
 ## Modified Codes
 
-### vector_src.h
-Below lines are added to avoid error by template specialization.
-Without this, you need to include `vector_*.h` files to use some vector<> type.
-```
-#undef EXPCL
-#undef EXPTP
-#define EXPCL
-#define EXPTP
-```
-
-
 ### dtoolbase_cc.h
 Move `DEFAULT_CTOR` macro to the block of Visual Studio 2015.
 ```

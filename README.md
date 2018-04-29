@@ -6,14 +6,14 @@ This repository is used to develop [Render Pipeline C++](https://github.com/blue
 
 ## Build Status
 
-| OS       | Build Status             | Latest Build                                      |
-| :------: | :----------------------: | :-----------------------------------------------: |
-| Windows  | [![win-badge]][win-link] | vc14 ([Debug][win-debug], [Release][win-release]) |
+| OS       | Build Status             | Latest Build                                       |
+| :------: | :----------------------: | :------------------------------------------------: |
+| Windows  | [![win-badge]][win-link] | vc141 ([Debug][vc141-debug], [Release][vc141-release]) |
 
 [win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
 [win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"
-[win-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Debug "Download latest build (Debug)"
-[win-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Release "Download latest build (Release)"
+[vc141-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Debug "Download latest build (Debug)"
+[vc141-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Release "Download latest build (Release)"
 
 ##### Note
 - These builds are own CMake builds, not everything. So, some files may be omitted.
@@ -66,6 +66,10 @@ See [README](https://github.com/panda3d/panda3d) in official repository. OR, you
 
 
 # Customizing
+
+See github-compare for all differences:
+
+    https://github.com/panda3d/panda3d/compare/master...bluekyu:master
 
 ## Modified Codes
 

@@ -27,6 +27,7 @@ endforeach()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     find_package(Threads REQUIRED)
+    find_package(Eigen3 REQUIRED)
 endif()
 # ==================================================================================================
 
@@ -48,8 +49,9 @@ else()
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${panda3d_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${panda3d_LIBRARY}
-    $<$<PLATFORM_ID:Linux>:Threads::Threads>
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${panda3d_LIBRARY})
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads Eigen3::Eigen)
+endif()
 # ==================================================================================================

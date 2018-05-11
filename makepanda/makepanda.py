@@ -1111,9 +1111,7 @@ def CompileCxx(obj,src,opts):
             # Work around a WinXP/2003 bug when using VS 2015+.
             if SDK.get("VISUALSTUDIO_VERSION") >= (14,0):
                 cmd += "/Zc:threadSafeInit- "
-
-            # resolve c4566 warning
-            if SDK.get("VISUALSTUDIO_VERSION") >= (14,0):
+                # resolve c4566 warning
                 cmd += "/utf-8 "
 
             cmd += "/Fo" + obj + " /nologo /c"

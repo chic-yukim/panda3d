@@ -1,8 +1,9 @@
 # Author: Younguk Kim (bluekyu)
-# Date  : 2017-08-18
 
-cmake_minimum_required(VERSION 3.6)
-project(panda3d_test)
+cmake_minimum_required(VERSION 3.9)
+project(panda3d_test
+    LANGUAGES CXX
+)
 
 # === configure ====================================================================================
 set(panda3d_INCLUDE_DIR "${panda3d_build_outputdir_path}/include")
@@ -25,7 +26,9 @@ foreach(component_name ${panda3d_DEFAULT_COMPONENTS})
     )
 endforeach()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    find_package(Eigen3 REQUIRED)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     find_package(Threads REQUIRED)
     find_package(Eigen3 REQUIRED)
 endif()
@@ -51,7 +54,9 @@ endif()
 target_include_directories(${PROJECT_NAME} PRIVATE ${panda3d_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${panda3d_LIBRARY})
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads Eigen3::Eigen)
 endif()
 # ==================================================================================================

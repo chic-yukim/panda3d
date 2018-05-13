@@ -3062,19 +3062,22 @@ if tp_dir is not None:
 # Copy over the MSVC runtime.
 if GetTarget() == 'windows' and "VISUALSTUDIO" in SDK:
     vsver = "%s%s" % SDK["VISUALSTUDIO_VERSION"]
-    vcver = "%s%s" % (SDK["MSVC_VERSION"][0], 0)        # ignore minor version.
-    crtname = "Microsoft.VC%s.CRT" % (vsver)
-    if ("VCTOOLSVERSION" in SDK):
-        dir = os.path.join(SDK["VISUALSTUDIO"], "VC", "Redist", "MSVC", SDK["VCTOOLSVERSION"], "onecore", GetTargetArch(), crtname)
+    vcver = "%s%s" % SDK["MSVC_VERSION"]
+    vcver_dll = "%s%s" % (SDK["MSVC_VERSION"][0], 0)        # ignore minor version. ex) 14.1 to 140
+    crtname = "Microsoft.VC%s.CRT" % (vcver)
+    if ("VCTOOLSVERSION" in SDK):                           # vs 15 ~
+        if (SDK["VCTOOLSVERSION"][0:5] == "14.10"):         # vs 15.0 ~ 15.2 (14.10) has incorrect name as VC150.CRT
+            crtname = "Microsoft.VC%s.CRT" % (vsver)
+        dir = os.path.join(SDK["VISUALSTUDIO"], "VC", "Redist", "MSVC", SDK["VCTOOLSVERSION"], GetTargetArch(), crtname)
     else:
         dir = os.path.join(SDK["VISUALSTUDIO"], "VC", "redist", GetTargetArch(), crtname)
 
-    if os.path.isfile(os.path.join(dir, "msvcr" + vcver + ".dll")):
-        CopyFile(GetOutputDir() + "/bin/", os.path.join(dir, "msvcr" + vcver + ".dll"))
-    if os.path.isfile(os.path.join(dir, "msvcp" + vcver + ".dll")):
-        CopyFile(GetOutputDir() + "/bin/", os.path.join(dir, "msvcp" + vcver + ".dll"))
-    if os.path.isfile(os.path.join(dir, "vcruntime" + vcver + ".dll")):
-        CopyFile(GetOutputDir() + "/bin/", os.path.join(dir, "vcruntime" + vcver + ".dll"))
+    if os.path.isfile(os.path.join(dir, "msvcr" + vcver_dll + ".dll")):
+        CopyFile(GetOutputDir() + "/bin/", os.path.join(dir, "msvcr" + vcver_dll + ".dll"))
+    if os.path.isfile(os.path.join(dir, "msvcp" + vcver_dll + ".dll")):
+        CopyFile(GetOutputDir() + "/bin/", os.path.join(dir, "msvcp" + vcver_dll + ".dll"))
+    if os.path.isfile(os.path.join(dir, "vcruntime" + vcver_dll + ".dll")):
+        CopyFile(GetOutputDir() + "/bin/", os.path.join(dir, "vcruntime" + vcver_dll + ".dll"))
 
 ########################################################################
 ##

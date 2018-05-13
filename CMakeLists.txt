@@ -29,15 +29,20 @@ option(panda3d_build_verbose "Verbose" OFF)
 
 # package options
 option(panda3d_build_everything "Build with everything options" OFF)
+option(panda3d_build_eigen "Build with --use-eigen options" ON)
 option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
 option(panda3d_build_python "Build with --use-python options" OFF)
 option(panda3d_disable_minmax "Set 'PHAVE_MINMAX_H=UNDEF'" ON)
 option(panda3d_enable_pstats "Set 'DO_PSTATS=1'" OFF)
 
-set(panda3d_build_packages "direct" "gl" "eigen" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
+set(panda3d_build_packages "direct" "gl" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
     "squish" "assimp" "egg" "freetype" "harfbuzz" "directcam" "vision" "pandatool" "sse2"
 )
+
+if(panda3d_build_eigen)
+    set(panda3d_build_packages ${panda3d_build_packages} "eigen")
+endif()
 
 if(panda3d_build_python)
     set(panda3d_build_packages ${panda3d_build_packages} "python")

@@ -25,35 +25,22 @@ init:
     if (Test-Path env:TRIGGER_NAME) {
         Update-AppveyorBuild -Message "Build by $env:TRIGGER_BUILD_VERSION in $env:TRIGGER_NAME"
     }
-# upgrade vcpkg
-- ps: pushd C:\tools\vcpkg
-- git pull --quiet
-- git checkout -qf 1c49195f789b7b8d7eaeb2542730a1f72cfbefcf
-- .\bootstrap-vcpkg.bat
-- ps: popd
 - git --version
 - python --version
 - cmake --version
-- vcpkg version
 
 # environment variables
 environment:
     CMAKE_GENERATOR: Visual Studio 15 2017 Win64
     MAKEPANDA_THIRDPARTY: C:/projects/_install/panda3d-thirdparty
     PATH: C:\Python36-x64;%PATH%
-    VCPKG_DEFAULT_TRIPLET: x64-windows
 
 # this is how to allow failing jobs in the matrix
 matrix:
     fast_finish: true   # set this flag to immediately finish build once one of the jobs fails.
 
-# build cache to preserve files/folders between builds
-cache:
-    - c:\tools\vcpkg\installed\
-
 # scripts that run after cloning repository
 install:
-- vcpkg install eigen3
 - ps: (mkdir C:\projects\_install) -and (pushd C:\projects\_install)
 - ps: >-
     if ($env:CONFIGURATION -eq "Debug") {
@@ -85,15 +72,13 @@ build_script:
 - cmd: >-
     if "%CONFIGURATION%"=="Debug" (
     cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
-    -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
-    -DVCPKG_APPLOCAL_DEPS:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
     -Dpanda3d_build_optimize=1
+    -Dpanda3d_build_eigen=OFF
     ) else (
     cmake -G "%CMAKE_GENERATOR%" -Wno-dev ..
-    -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
-    -DVCPKG_APPLOCAL_DEPS:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX="C:/projects/_install/panda3d"
+    -Dpanda3d_build_eigen=OFF
     )
 - cmake --build . --config %CONFIGURATION% --target install
 - ps: popd

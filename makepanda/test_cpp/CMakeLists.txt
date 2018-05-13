@@ -27,10 +27,14 @@ foreach(component_name ${panda3d_DEFAULT_COMPONENTS})
 endforeach()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    find_package(Eigen3 REQUIRED)
+    if(panda3d_build_eigen)
+        find_package(Eigen3 REQUIRED)
+    endif()
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     find_package(Threads REQUIRED)
-    find_package(Eigen3 REQUIRED)
+    if(panda3d_build_eigen)
+        find_package(Eigen3 REQUIRED)
+    endif()
 endif()
 # ==================================================================================================
 
@@ -55,8 +59,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${panda3d_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${panda3d_LIBRARY})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        $<$<BOOL:${panda3d_build_eigen}>:Eigen3::Eigen>
+    )
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads Eigen3::Eigen)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads
+        $<$<BOOL:${panda3d_build_eigen}>:Eigen3::Eigen>
+    )
 endif()
 # ==================================================================================================

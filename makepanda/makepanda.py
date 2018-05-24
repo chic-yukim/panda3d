@@ -1123,7 +1123,9 @@ def CompileCxx(obj,src,opts):
             if (optlevel==2): cmd += " /MDd /Zi"
             if (optlevel==3): cmd += " /MD /Zi /GS- /O2 /Ob2 /Oi /Ot /fp:fast"
             if (optlevel==4):
-                cmd += " /MD /Zi /GS- /Ox /Ob2 /Oi /Ot /fp:fast /DFORCE_INLINING /DNDEBUG /GL"
+                cmd += " /MD /Zi /GS- /Ox /Ob2 /Oi /Ot /fp:fast /DFORCE_INLINING /DNDEBUG"
+                if (not (("VCTOOLSVERSION" in SDK) and (SDK["VCTOOLSVERSION"][:5] == "14.14"))):
+                    cmd += " /GL"
                 cmd += " /Oy /Zp16"      # jean-claude add /Zp16 insures correct static alignment for SSEx
 
             cmd += " /Fd" + os.path.splitext(obj)[0] + ".pdb"
@@ -1557,7 +1559,8 @@ def CompileLib(lib, obj, opts):
             #Use MSVC Linker
             cmd = 'link /lib /nologo'
             if GetOptimizeOption(opts) == 4:
-                cmd += " /LTCG"
+                if (not (("VCTOOLSVERSION" in SDK) and (SDK["VCTOOLSVERSION"][:5] == "14.14"))):
+                    cmd += " /LTCG"
             if HasTargetArch():
                 cmd += " /MACHINE:" + GetTargetArch().upper()
             cmd += ' /OUT:' + BracketNameWithQuotes(lib)
@@ -1609,7 +1612,10 @@ def CompileLink(dll, obj, opts):
             if (optlevel==1): cmd += " /MAP /MAPINFO:EXPORTS /NOD:MSVCRT.LIB /NOD:MSVCPRT.LIB /NOD:MSVCIRT.LIB"
             if (optlevel==2): cmd += " /MAP:NUL /NOD:MSVCRT.LIB /NOD:MSVCPRT.LIB /NOD:MSVCIRT.LIB"
             if (optlevel==3): cmd += " /MAP:NUL /NOD:MSVCRTD.LIB /NOD:MSVCPRTD.LIB /NOD:MSVCIRTD.LIB"
-            if (optlevel==4): cmd += " /MAP:NUL /LTCG /NOD:MSVCRTD.LIB /NOD:MSVCPRTD.LIB /NOD:MSVCIRTD.LIB"
+            if (optlevel==4):
+                cmd += " /MAP:NUL /NOD:MSVCRTD.LIB /NOD:MSVCPRTD.LIB /NOD:MSVCIRTD.LIB"
+                if (not (("VCTOOLSVERSION" in SDK) and (SDK["VCTOOLSVERSION"][:5] == "14.14"))):
+                    cmd += " /LTCG"
             if ("MFC" in opts):
                 if (optlevel<=2): cmd += " /NOD:MSVCRTD.LIB mfcs100d.lib MSVCRTD.lib"
                 else: cmd += " /NOD:MSVCRT.LIB mfcs100.lib MSVCRT.lib"

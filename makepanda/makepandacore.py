@@ -2594,6 +2594,9 @@ def SetupVisualStudioEnviron():
             vsver_file = open(os.path.join(SDK["VISUALSTUDIO"],
                 "VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt"), "r")
             SDK["VCTOOLSVERSION"] = vsver_file.readline().strip()
+            if (SDK["VCTOOLSVERSION"][:5] == "14.14"):
+                print("MSVC Toolset 14.14 has a internal compiler bug, so Toolset version will be set to 14.13")
+                SDK["VCTOOLSVERSION"] = "14.13.26128"
             vcdir_suffix = "VC\\Tools\\MSVC\\%s\\" % SDK["VCTOOLSVERSION"]
         except:
             exit("Couldn't find tool version of %s." % MSVCVERSIONINFO[SDK["MSVC_VERSION"]]["vsname"])

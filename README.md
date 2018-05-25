@@ -6,17 +6,20 @@ This repository is used to develop [Render Pipeline C++](https://github.com/blue
 
 ## Build Status
 
-| OS       | Build Status             | Latest Build                                       |
-| :------: | :----------------------: | :------------------------------------------------: |
-| Windows  | [![win-badge]][win-link] | vc141 ([Debug][vc141-debug], [Release][vc141-release]) |
+| OS       | Build Status           | Latest Build                                           |
+| :------: | :--------------------: | :----------------------------------------------------: |
+| Windows  | [![ci-badge]][ci-link] | vc141 ([Debug][vc141-debug], [Release][vc141-release]) |
+| Linux    | [![ci-badge]][ci-link] | [Debug][nix-debug], [Release][nix-debug]               |
 
-[win-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
-[win-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"
-[vc141-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Debug "Download latest build (Debug)"
-[vc141-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Configuration%3A+Release "Download latest build (Release)"
+[ci-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
+[ci-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"
+[vc141-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+Debug "Download latest Windows build (Debug)"
+[vc141-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+Release "Download latest Windows build (Release)"
+[nix-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.tar.xz?branch=master&job=Image%3A+Ubuntu%3B+Configuration%3A+Debug "Download latest Linux build (Debug)"
+[nix-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.tar.xz?branch=master&job=Image%3A+Ubuntu%3B+Configuration%3A+Release "Download latest Linux build (Release)"
 
 ##### Note
-- These builds are own CMake builds, not everything. So, some files may be omitted.
+- These builds uses only partial third-parties, not everything. So, some third-parties may be omitted.
 - Windows Debug: Optimize option is 1 with MixForDebug in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
 - Windows Release: Optimize option is 4 with Release in [panda3d-thirdparty](https://github.com/bluekyu/panda3d-thirdparty)
 
@@ -68,14 +71,4 @@ See [README](https://github.com/panda3d/panda3d) in official repository. OR, you
 # Customizing
 
 See github-compare for all differences:
-
-    https://github.com/panda3d/panda3d/compare/master...bluekyu:master
-
-## Modified Codes
-
-### dtoolbase_cc.h
-Move `DEFAULT_CTOR` macro to the block of Visual Studio 2015.
-```
-#elif defined(_MSC_VER) && _MSC_VER >= 1900 // Visual Studio 2015
-#  define DEFAULT_CTOR = default
-```
+https://github.com/panda3d/panda3d/compare/master...bluekyu:master

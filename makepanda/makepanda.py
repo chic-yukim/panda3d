@@ -2276,7 +2276,7 @@ DTOOL_CONFIG=[
     ("DEFAULT_PATHSEP",                '";"',                    '":"'),
     ("WORDS_BIGENDIAN",                'UNDEF',                  'UNDEF'),
     ("HAVE_OPEN_MASK",                 'UNDEF',                  'UNDEF'),
-    ("HAVE_LOCKF",                     '1',                      '1'),
+    ("PHAVE_LOCKF",                    '1',                      '1'),
     ("HAVE_WCHAR_T",                   '1',                      '1'),
     ("HAVE_WSTRING",                   '1',                      '1'),
     ("SIMPLE_STRUCT_POINTERS",         '1',                      'UNDEF'),
@@ -2453,7 +2453,7 @@ def WriteConfigSettings():
         # Android does have RTTI, but we disable it anyway.
         dtool_config["HAVE_RTTI"] = 'UNDEF'
         dtool_config["PHAVE_GLOB_H"] = 'UNDEF'
-        dtool_config["HAVE_LOCKF"] = 'UNDEF'
+        dtool_config["PHAVE_LOCKF"] = 'UNDEF'
         dtool_config["HAVE_VIDEO4LINUX"] = 'UNDEF'
 
     if (GetOptimize() <= 2 and GetTarget() == "windows"):
@@ -2614,18 +2614,21 @@ PANDAVERSION_H_RUNTIME="""
 
 CHECKPANDAVERSION_CXX="""
 # include "dtoolbase.h"
-EXPCL_DTOOL_DTOOLUTIL int panda_version_$VERSION1_$VERSION2 = 0;
+EXPCL_DTOOL_DTOOLBASE int panda_version_$VERSION1_$VERSION2 = 0;
 """
 
 CHECKPANDAVERSION_H="""
+# ifndef CHECKPANDAVERSION_H
+# define CHECKPANDAVERSION_H
 # include "dtoolbase.h"
-extern EXPCL_DTOOL_DTOOLUTIL int panda_version_$VERSION1_$VERSION2;
-# ifndef WIN32
-/* For Windows, exporting the symbol from the DLL is sufficient; the
-      DLL will not load unless all expected public symbols are defined.
-      Other systems may not mind if the symbol is absent unless we
-      explictly write code that references it. */
-static int check_panda_version = panda_version_$VERSION1_$VERSION2;
+extern EXPCL_DTOOL_DTOOLBASE int panda_version_$VERSION1_$VERSION2;
+// Hack to forcibly depend on the check
+template<typename T>
+class CheckPandaVersion {
+public:
+  int check_version() { return panda_version_$VERSION1_$VERSION2; }
+};
+template class CheckPandaVersion<void>;
 # endif
 """
 

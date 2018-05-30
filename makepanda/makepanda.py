@@ -1358,6 +1358,16 @@ def CompileCxx(obj,src,opts):
         if (optlevel==3): cmd += " -O2"
         if (optlevel==4): cmd += " -O3 -DNDEBUG"
 
+        # Enable more warnings.
+        cmd += " -Wall -Wno-reorder -Wno-unused-function"
+
+        if not src.endswith(".c"):
+            cmd += " -Wno-reorder"
+
+        # Ignore unused variables in NDEBUG builds, often used in asserts.
+        if optlevel == 4:
+            cmd += " -Wno-unused-variable"
+
         if src.endswith(".c"):
             cmd += ' ' + CFLAGS
         else:
@@ -2275,10 +2285,7 @@ DTOOL_CONFIG=[
     ("DO_PIPELINING",                  '1',                      '1'),
     ("DEFAULT_PATHSEP",                '";"',                    '":"'),
     ("WORDS_BIGENDIAN",                'UNDEF',                  'UNDEF'),
-    ("HAVE_OPEN_MASK",                 'UNDEF',                  'UNDEF'),
     ("PHAVE_LOCKF",                    '1',                      '1'),
-    ("HAVE_WCHAR_T",                   '1',                      '1'),
-    ("HAVE_WSTRING",                   '1',                      '1'),
     ("SIMPLE_STRUCT_POINTERS",         '1',                      'UNDEF'),
     ("HAVE_DINKUM",                    'UNDEF',                  'UNDEF'),
     ("HAVE_STL_HASH",                  'UNDEF',                  'UNDEF'),
@@ -2288,7 +2295,6 @@ DTOOL_CONFIG=[
     ("PHAVE_GETOPT_H",                 'UNDEF',                  '1'),
     ("PHAVE_LINUX_INPUT_H",            'UNDEF',                  '1'),
     ("IOCTL_TERMINAL_WIDTH",           'UNDEF',                  '1'),
-    ("HAVE_STREAMSIZE",                '1',                      '1'),
     ("HAVE_IOS_TYPEDEFS",              '1',                      '1'),
     ("HAVE_IOS_BINARY",                '1',                      '1'),
     ("STATIC_INIT_GETENV",             '1',                      'UNDEF'),
@@ -2321,7 +2327,6 @@ DTOOL_CONFIG=[
     ("PHAVE_UTIME_H",                  'UNDEF',                  '1'),
     ("PHAVE_GLOB_H",                   'UNDEF',                  '1'),
     ("PHAVE_DIRENT_H",                 'UNDEF',                  '1'),
-    ("PHAVE_SYS_SOUNDCARD_H",          'UNDEF',                  '1'),
     ("PHAVE_UCONTEXT_H",               'UNDEF',                  '1'),
     ("PHAVE_STDINT_H",                 '1',                      '1'),
     ("HAVE_RTTI",                      '1',                      '1'),
@@ -2334,7 +2339,6 @@ DTOOL_CONFIG=[
     ("HAVE_ZLIB",                      'UNDEF',                  'UNDEF'),
     ("HAVE_PNG",                       'UNDEF',                  'UNDEF'),
     ("HAVE_JPEG",                      'UNDEF',                  'UNDEF'),
-    ("PHAVE_JPEGINT_H",                '1',                      '1'),
     ("HAVE_VIDEO4LINUX",               'UNDEF',                  '1'),
     ("HAVE_TIFF",                      'UNDEF',                  'UNDEF'),
     ("HAVE_OPENEXR",                   'UNDEF',                  'UNDEF'),

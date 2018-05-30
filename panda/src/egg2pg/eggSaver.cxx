@@ -839,7 +839,6 @@ convert_primitive(const GeomVertexData *vertex_data,
   }
 
   // Check the backface flag.
-  bool bface = false;
   const CullFaceAttrib *cfa;
   if (net_state->get_attrib(cfa)) {
     if (cfa->get_effective_mode() == CullFaceAttrib::M_cull_none) {
@@ -861,8 +860,6 @@ convert_primitive(const GeomVertexData *vertex_data,
     }
   }
 
-  LNormal normal;
-  LColor color;
   CPT(TransformBlendTable) transformBlendTable = vertex_data->get_transform_blend_table();
 
   int num_primitives = primitive->get_num_primitives();

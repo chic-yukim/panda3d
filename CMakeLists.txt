@@ -1,5 +1,4 @@
 # Author: Younguk Kim (bluekyu)
-# Date  : 2017-08-12
 
 cmake_minimum_required(VERSION 3.6)
 project(panda3d)
@@ -33,7 +32,6 @@ option(panda3d_build_eigen "Build with --use-eigen options" ON)
 option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
 option(panda3d_build_python "Build with --use-python options" OFF)
-option(panda3d_disable_minmax "Set 'PHAVE_MINMAX_H=UNDEF'" ON)
 option(panda3d_enable_pstats "Set 'DO_PSTATS=1'" OFF)
 
 set(panda3d_build_packages "direct" "gl" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
@@ -101,10 +99,6 @@ if(WIN32)
         --msvc-version=${panda3d_build_msvc_version}
         --windows-sdk=${panda3d_build_windows_sdk}
     )
-
-    if(panda3d_disable_minmax)
-        set(panda3d_build_command ${panda3d_build_command} --override PHAVE_MINMAX_H=UNDEF)
-    endif()
 
     if(panda3d_enable_pstats)
         set(panda3d_build_command ${panda3d_build_command} --override DO_PSTATS=1)

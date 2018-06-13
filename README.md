@@ -9,7 +9,7 @@ This repository is used to develop [Render Pipeline C++](https://github.com/blue
 | OS       | Build Status           | Latest Build                                           |
 | :------: | :--------------------: | :----------------------------------------------------: |
 | Windows  | [![ci-badge]][ci-link] | vc141 ([Debug][vc141-debug], [Release][vc141-release]) |
-| Linux    | [![ci-badge]][ci-link] | [Debug][nix-debug], [Release][nix-debug]               |
+| Linux    | [![ci-badge]][ci-link] | [Debug][nix-debug], [Release][nix-release]             |
 
 [ci-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
 [ci-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"

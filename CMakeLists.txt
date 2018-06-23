@@ -33,6 +33,7 @@ option(panda3d_build_assimp "Build with --use-assimp options" OFF)
 option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
 option(panda3d_build_python "Build with --use-python options" OFF)
+option(panda3d_enable_fixed_function "Unset 'SUPPORT_FIXED_FUNCTION=UNDEF'" OFF)
 option(panda3d_enable_pstats "Set 'DO_PSTATS=1'" OFF)
 
 set(panda3d_build_packages "direct" "gl" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
@@ -104,10 +105,14 @@ if(WIN32)
         --msvc-version=${panda3d_build_msvc_version}
         --windows-sdk=${panda3d_build_windows_sdk}
     )
+endif()
 
-    if(panda3d_enable_pstats)
-        set(panda3d_build_command ${panda3d_build_command} --override DO_PSTATS=1)
-    endif()
+if(panda3d_enable_pstats)
+    set(panda3d_build_command ${panda3d_build_command} --override DO_PSTATS=1)
+endif()
+
+if(NOT panda3d_enable_fixed_function)
+    set(panda3d_build_command ${panda3d_build_command} --override SUPPORT_FIXED_FUNCTION=UNDEF)
 endif()
 
 # apply package options

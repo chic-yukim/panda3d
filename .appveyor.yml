@@ -94,7 +94,7 @@ build_script:
     else
         cmake -G "$CMAKE_GENERATOR" -Wno-dev .. -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX/panda3d" -Dpanda3d_build_eigen=OFF
     fi
-- sh: cmake --build . --config $CONFIGURATION --target install
+- sh: cmake --build . --config $CONFIGURATION --target ALL_BUILD
 
 # Visual Studio
 - cmd: >-
@@ -104,18 +104,9 @@ build_script:
     cmake .. -G "%CMAKE_GENERATOR%" -Wno-dev -DCMAKE_INSTALL_PREFIX="%INSTALL_PREFIX%/panda3d" -Dpanda3d_build_eigen=OFF
     )
 
-    cmake --build . --config %CONFIGURATION% --target install
+    cmake --build . --config %CONFIGURATION% --target ALL_BUILD
 
 - ps: popd
-
-after_build:
-# Ubuntu
-- sh: pushd "$INSTALL_PREFIX"
-- sh: tar cJf "$APPVEYOR_BUILD_FOLDER/panda3d.tar.xz" "panda3d"
-- sh: popd
-
-# Visual Studio
-- cmd: 7z a panda3d.7z "%INSTALL_PREFIX%/panda3d"
 
 #---------------------------------#
 #       tests configuration       #
@@ -125,6 +116,17 @@ test_script:
 - ps: pushd _build
 - ps: ctest -C $env:CONFIGURATION --output-on-failure
 - ps: popd
+
+after_test:
+# Ubuntu
+- sh: cmake --build _build --config $CONFIGURATION --target INSTALL
+- sh: pushd "$INSTALL_PREFIX"
+- sh: tar cJf "$APPVEYOR_BUILD_FOLDER/panda3d.tar.xz" "panda3d"
+- sh: popd
+
+# Visual Studio
+- cmd: cmake --build _build --config %CONFIGURATION% --target INSTALL
+- cmd: 7z a panda3d.7z "%INSTALL_PREFIX%/panda3d"
 
 #---------------------------------#
 #     deployment configuration    #

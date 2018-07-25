@@ -1699,6 +1699,14 @@ reset() {
        get_extension_func("glUniform3iv");
     _glUniform4iv = (PFNGLUNIFORM4IVPROC)
        get_extension_func("glUniform4iv");
+    _glUniform1uiv = (PFNGLUNIFORM1UIVPROC)
+       get_extension_func("glUniform1uiv");
+    _glUniform2uiv = (PFNGLUNIFORM2UIVPROC)
+       get_extension_func("glUniform2uiv");
+    _glUniform3uiv = (PFNGLUNIFORM3UIVPROC)
+       get_extension_func("glUniform3uiv");
+    _glUniform4uiv = (PFNGLUNIFORM4UIVPROC)
+       get_extension_func("glUniform4uiv");
     _glUniformMatrix3fv = (PFNGLUNIFORMMATRIX3FVPROC)
        get_extension_func("glUniformMatrix3fv");
     _glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)
@@ -1777,6 +1785,10 @@ reset() {
   _glUniform2fv = glUniform2fv;
   _glUniform3fv = glUniform3fv;
   _glUniform4fv = glUniform4fv;
+  _glUniform1iv = glUniform1iv;
+  _glUniform2iv = glUniform2iv;
+  _glUniform3iv = glUniform3iv;
+  _glUniform4iv = glUniform4iv;
   _glUniformMatrix3fv = glUniformMatrix3fv;
   _glUniformMatrix4fv = glUniformMatrix4fv;
   _glValidateProgram = glValidateProgram;
@@ -6389,10 +6401,11 @@ prepare_shader_buffer(ShaderBuffer *data) {
 
     if (_use_object_labels) {
       string name = data->get_name();
-      _glObjectLabel(GL_SHADER_STORAGE_BUFFER, gbc->_index, name.size(), name.data());
+      _glObjectLabel(GL_BUFFER, gbc->_index, name.size(), name.data());
     }
 
-    uint64_t num_bytes = data->get_data_size_bytes();
+    // Some drivers require the buffer to be padded to 16 byte boundary.
+    uint64_t num_bytes = (data->get_data_size_bytes() + 15u) & ~15u;
     if (_supports_buffer_storage) {
       _glBufferStorage(GL_SHADER_STORAGE_BUFFER, num_bytes, data->get_initial_data(), 0);
     } else {
@@ -13442,7 +13455,14 @@ do_extract_texture_data(CLP(TextureContext) *gtc) {
 
   GLint internal_format = GL_RGBA;
 #ifndef OPENGLES
-  glGetTexLevelParameteriv(page_target, 0, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
+  if (target != GL_TEXTURE_BUFFER) {
+    glGetTexLevelParameteriv(page_target, 0, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
+  } else {
+    // Some drivers give the wrong result for the above call.  No problem; we
+    // already know the internal format of a buffer texture since glTexBuffer
+    // required passing the exact sized format.
+    internal_format = gtc->_internal_format;
+  }
 #endif  // OPENGLES
 
   // Make sure we were able to query those parameters properly.

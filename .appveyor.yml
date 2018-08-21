@@ -47,6 +47,7 @@ install:
 - ps: pushd $env:INSTALL_PREFIX
 
 # Ubuntu
+- sh: sudo update-alternatives --set gcc /usr/bin/gcc-8
 - sh: sudo apt-get update
 - sh: sudo apt-get install --yes --no-install-recommends libjpeg-dev libtiff-dev libgl1-mesa-dev libvorbis-dev libopenal-dev libharfbuzz-dev libopenexr-dev libassimp-dev
 

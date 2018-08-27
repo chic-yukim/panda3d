@@ -9,10 +9,11 @@ project(panda3d_test
 set(panda3d_INCLUDE_DIR "${panda3d_build_outputdir_path}/include")
 set(panda3d_DEFAULT_COMPONENTS p3framework panda pandaexpress p3dtool p3dtoolconfig p3direct p3interrogatedb)
 
-if(${panda3d_build_optimize} GREATER_EQUAL "3")
-    set(panda3d_lib_suffix "")
-else()
-    set(panda3d_lib_suffix "_d")
+set(panda3d_lib_suffix "")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    if(${panda3d_build_optimize} LESS "3")
+        set(panda3d_lib_suffix "_d")
+    endif()
 endif()
 
 

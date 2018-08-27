@@ -25,6 +25,7 @@ init:
     if (($isLinux) -and ($env:CONFIGURATION -eq "Debug") -and (Test-Path env:TRIGGER_NAME)) {
         Update-AppveyorBuild -Message "Build by $env:TRIGGER_BUILD_VERSION in $env:TRIGGER_NAME"
     }
+- sh: sudo update-alternatives --set gcc /usr/bin/gcc-8
 - git --version
 - python --version
 - cmake --version
@@ -43,15 +44,11 @@ matrix:
 
 # scripts that run after cloning repository
 install:
-- ps: mkdir $env:INSTALL_PREFIX
-- ps: pushd $env:INSTALL_PREFIX
-
-# Ubuntu
-- sh: sudo update-alternatives --set gcc /usr/bin/gcc-8
 - sh: sudo apt-get update
 - sh: sudo apt-get install --yes --no-install-recommends libjpeg-dev libtiff-dev libgl1-mesa-dev libvorbis-dev libopenal-dev libharfbuzz-dev libopenexr-dev libassimp-dev
 
-# Visual Studio
+- ps: mkdir $env:INSTALL_PREFIX
+- ps: pushd $env:INSTALL_PREFIX
 - ps: >-
     if ($isWindows) {
         if ($env:CONFIGURATION -eq "Debug") {
@@ -61,7 +58,6 @@ install:
         }
     }
 - cmd: 7z x -y panda3d-thirdparty.7z > nul
-
 - ps: popd
 
 

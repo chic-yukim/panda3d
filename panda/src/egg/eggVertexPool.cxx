@@ -677,7 +677,8 @@ transform(const LMatrix4d &mat) {
     typedef pvector<EggVertex *> Verts;
     Verts verts;
     verts.reserve(size());
-    std::copy(begin(), end(), std::back_inserter(verts));
+    for (const IndexVertices::value_type& v: _index_vertices)
+        verts.push_back(v.second);
 
     Verts::const_iterator vi;
     for (vi = verts.begin(); vi != verts.end(); ++vi) {

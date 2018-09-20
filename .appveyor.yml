@@ -11,7 +11,7 @@ version: '{branch}-{build}'
 
 # Build worker image (VM template)
 image:
-- Ubuntu
+- Ubuntu1804
 - Visual Studio 2017
 
 
@@ -38,8 +38,6 @@ init:
 # this is how to allow failing jobs in the matrix
 matrix:
     fast_finish: true   # set this flag to immediately finish build once one of the jobs fails.
-    allow_failures:
-        - image: Ubuntu # Sometimes, Ubuntu fails without any reason.
 
 
 # scripts that run after cloning repository
@@ -84,7 +82,7 @@ build_script:
 - ps: mkdir _build
 - ps: pushd _build
 
-# Ubuntu
+# Linux
 - sh: >-
     if [ "$CONFIGURATION" = "Debug" ]; then
         cmake -G "$CMAKE_GENERATOR" -Wno-dev .. -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX/panda3d" -Dpanda3d_build_eigen=OFF -Dpanda3d_build_optimize=1
@@ -115,7 +113,7 @@ test_script:
 - ps: popd
 
 after_test:
-# Ubuntu
+# Linux
 - sh: cmake --build _build --config $CONFIGURATION --target install
 - sh: pushd "$INSTALL_PREFIX"
 - sh: tar cJf "$APPVEYOR_BUILD_FOLDER/panda3d.tar.xz" "panda3d"
@@ -153,7 +151,7 @@ for:
 -
     matrix:
         only:
-            - image: Ubuntu
+            - image: Ubuntu1804
     stack: python 3
     environment:
         CMAKE_GENERATOR: Unix Makefiles

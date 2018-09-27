@@ -29,6 +29,7 @@ option(panda3d_build_verbose "Verbose" OFF)
 # package options
 option(panda3d_build_everything "Build with everything options" OFF)
 option(panda3d_build_eigen "Build with --use-eigen options" ON)
+option(panda3d_build_pandatool "Build with --use-pandatool options" OFF)
 option(panda3d_build_assimp "Build with --use-assimp options" OFF)
 option(panda3d_build_maya "Build with --use-maya options" OFF)
 option(panda3d_build_max "Build with --use-max options" OFF)
@@ -37,7 +38,7 @@ option(panda3d_enable_fixed_function "Unset 'SUPPORT_FIXED_FUNCTION=UNDEF'" OFF)
 option(panda3d_enable_pstats "Set 'DO_PSTATS=1'" OFF)
 
 set(panda3d_build_packages "direct" "gl" "openal" "vorbis" "zlib" "png" "jpeg" "tiff" "openexr"
-    "squish" "egg" "freetype" "harfbuzz" "directcam" "vision" "x11" "pandatool" "sse2"
+    "squish" "egg" "freetype" "harfbuzz" "directcam" "vision" "x11" "sse2"
 )
 
 if(panda3d_build_eigen)
@@ -48,8 +49,15 @@ if(panda3d_build_python)
     set(panda3d_build_packages ${panda3d_build_packages} "python")
 endif()
 
+if(panda3d_build_pandatool)
+    set(panda3d_build_packages ${panda3d_build_packages} "pandatool")
+endif()
+
 if(panda3d_build_assimp)
     set(panda3d_build_packages ${panda3d_build_packages} "assimp")
+    if(NOT panda3d_build_pandatool)
+        message(WARNING "pandatool is disabled.")
+    endif()
 endif()
 
 if(panda3d_build_maya)
@@ -57,12 +65,18 @@ if(panda3d_build_maya)
         "maya6" "maya65" "maya7" "maya8" "maya85" "maya2008" "maya2009" "maya2010" "maya2011" "maya2012" "maya2013"
         "maya20135" "maya2014" "maya2015" "maya2016" "maya20165" "maya2017" #"maya2018"
     )
+    if(NOT panda3d_build_pandatool)
+        message(WARNING "pandatool is disabled.")
+    endif()
 endif()
 
 if(panda3d_build_max)
     set(panda3d_build_packages ${panda3d_build_packages}
         "max6" "max7" "max8" "max9" "max2009" "max2010" "max2011" "max2012" "max2013" "max2014"
     )
+    if(NOT panda3d_build_pandatool)
+        message(WARNING "pandatool is disabled.")
+    endif()
 endif()
 
 find_package(PythonInterp REQUIRED)

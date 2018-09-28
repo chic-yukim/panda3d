@@ -68,9 +68,9 @@ install:
 - ps: >-
     if ($isWindows) {
         if ($env:CONFIGURATION -eq "Debug") {
-            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Configuration%3A+MixForDebug'
+            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+MixForDebug'
         } else {
-            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Configuration%3A+Release'
+            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+Release'
         }
     }
 - cmd: 7z x -y panda3d-thirdparty.7z > nul

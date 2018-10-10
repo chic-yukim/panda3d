@@ -48,7 +48,7 @@ And third-party license files are in 'thirdparty-licenses' directory.
 # Building Panda3D
 ## Windows
 
-We currently build using the Microsoft Visual Studio 2015 and 2017 on Windows 10. (default is VS2017.)
+I currently build using the Microsoft Visual Studio 2015 and 2017 on Windows 10. (default is VS2017.)
 Visual Studio 2015 and 2017 are binary compatible, so you can use any one.
 (for example, you can use VS2017 with VS2015 binary version.)
 

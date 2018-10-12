@@ -30,7 +30,7 @@ jobs:
   # initialize
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.x'
+      versionSpec: '3.7'
       addToPath: true
       architecture: 'x64'
 
@@ -39,7 +39,7 @@ jobs:
     displayName: Download panda3d-thirdparty
     inputs:
       buildType: 'specific'
-      project: panda3d-thirdparty
+      project: rpcpp-devops
       pipeline: panda3d-thirdparty
       specificBuildWithTriggering: true
       downloadType: 'single'

@@ -13,7 +13,6 @@ version: '{branch}-{build}'
 image:
 - Ubuntu1804
 - Visual Studio 2017 Preview
-- Visual Studio 2017
 
 
 # set clone depth
@@ -40,11 +39,6 @@ environment:
 # this is how to allow failing jobs in the matrix
 matrix:
     fast_finish: true   # set this flag to immediately finish build once one of the jobs fails.
-    allow_failures:
-        - image: Visual Studio 2017 Preview
-    exclude:
-        - configuration: Debug
-          image: Visual Studio 2017 Preview
 
 
 # build cache to preserve files/folders between builds
@@ -63,9 +57,9 @@ install:
 - ps: >-
     if ($isWindows) {
         if ($env:CONFIGURATION -eq "Debug") {
-            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+MixForDebug'
+            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Configuration%3A+MixForDebug'
         } else {
-            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+Release'
+            Start-FileDownload 'https://ci.appveyor.com/api/projects/bluekyu/panda3d-thirdparty/artifacts/panda3d-thirdparty.7z?branch=master&job=Configuration%3A+Release'
         }
     }
 - cmd: 7z x -y panda3d-thirdparty.7z > nul
@@ -157,7 +151,7 @@ deploy: off
 # on successful build
 on_success:
 - ps: >-
-    if (($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2017") -and ($env:CONFIGURATION -eq "Release") -and ($env:APPVEYOR_REPO_BRANCH -eq "master")) {
+    if (($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2017 Preview") -and ($env:CONFIGURATION -eq "Release") -and ($env:APPVEYOR_REPO_BRANCH -eq "master")) {
         Start-AppveyorBuild -ApiKey $env:api_key -ProjectSlug 'render-pipeline-cpp' -EnvironmentVariables @{
             TRIGGER_NAME = $env:APPVEYOR_PROJECT_NAME
             TRIGGER_BUILD_VERSION = $env:APPVEYOR_BUILD_VERSION
@@ -186,7 +180,6 @@ for:
 -
     matrix:
         only:
-            - image: Visual Studio 2017
             - image: Visual Studio 2017 Preview
     environment:
         CMAKE_GENERATOR: Visual Studio 15 2017 Win64

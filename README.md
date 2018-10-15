@@ -5,18 +5,19 @@ This repository is used to develop [Render Pipeline C++](https://github.com/blue
 
 
 ## Build Status
+| Build Status                       | About                       |
+| :--------------------------------: | :-------------------------: |
+| [![azure-badge]][azure-link]       | Visual Studio 2015 and 2017 |
+| [![appveyor-badge]][appveyor-link] | Visual Studio 2017 Preview  |
 
-| OS       | Build Status           | Latest Build                                           |
-| :------: | :--------------------: | :----------------------------------------------------: |
-| Windows  | [![ci-badge]][ci-link] | vc141 ([Debug][vc141-debug], [Release][vc141-release]) |
-| Linux    | [![ci-badge]][ci-link] | [Debug][nix-debug], [Release][nix-release]             |
+[azure-badge]: https://dev.azure.com/bluekyu/rpcpp-devops/_apis/build/status/panda3d/panda3d "Azure build status"
+[azure-link]: https://dev.azure.com/bluekyu/rpcpp-devops/_build/latest?definitionId=3 "Azure build link"
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
+[appveyor-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"
 
-[ci-badge]: https://ci.appveyor.com/api/projects/status/dti693iydj981tu5/branch/master?svg=true "AppVeyor build status"
-[ci-link]: https://ci.appveyor.com/project/bluekyu/panda3d/branch/master "AppVeyor build link"
-[vc141-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+Debug "Download latest Windows build (Debug)"
-[vc141-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.7z?branch=master&job=Image%3A+Visual+Studio+2017%3B+Configuration%3A+Release "Download latest Windows build (Release)"
-[nix-debug]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.tar.xz?branch=master&job=Image%3A+Ubuntu%3B+Configuration%3A+Debug "Download latest Linux build (Debug)"
-[nix-release]: https://ci.appveyor.com/api/projects/bluekyu/panda3d/artifacts/panda3d.tar.xz?branch=master&job=Image%3A+Ubuntu%3B+Configuration%3A+Release "Download latest Linux build (Release)"
+You can download built files from each Build Page.
+
+
 
 ##### Note
 - These builds uses only partial third-parties, not everything. So, some third-parties may be omitted.

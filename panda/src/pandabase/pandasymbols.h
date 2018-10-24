@@ -629,8 +629,8 @@
 #endif
 
 #if (defined(WIN32_VC) || defined(WIN64_VC)) && !defined(CPPPARSER)
-#define INLINE_LINMATH __forceinline
-#define INLINE_MATHUTIL __forceinline
+#define INLINE_LINMATH INLINE
+#define INLINE_MATHUTIL INLINE
 
 #else
 #define INLINE_LINMATH INLINE

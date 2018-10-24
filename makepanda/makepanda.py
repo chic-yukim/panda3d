@@ -1123,13 +1123,7 @@ def CompileCxx(obj,src,opts):
             if (optlevel==2): cmd += " /MDd /Zi"
             if (optlevel==3): cmd += " /MD /Zi /GS- /O2 /Ob2 /Oi /Ot /fp:fast"
             if (optlevel==4):
-                cmd += " /MD /Zi /GS- /Ox /Ob2 /Oi /Ot /fp:fast /DFORCE_INLINING /DNDEBUG"
-                if ("VCTOOLSVERSION" in SDK):
-                    vcversion = tuple(int(k) for k in SDK["VCTOOLSVERSION"][:5].split("."))
-                    if (vcversion < (14, 14)):
-                        cmd += " /GL"
-                else:
-                    cmd += " /GL"
+                cmd += " /MD /Zi /GS- /Ox /Ob2 /Oi /Ot /fp:fast /DNDEBUG /GL"
                 cmd += " /Oy /Zp16"      # jean-claude add /Zp16 insures correct static alignment for SSEx
 
             cmd += " /Fd" + os.path.splitext(obj)[0] + ".pdb"
@@ -1577,12 +1571,7 @@ def CompileLib(lib, obj, opts):
             #Use MSVC Linker
             cmd = 'link /lib /nologo'
             if GetOptimizeOption(opts) == 4:
-                if ("VCTOOLSVERSION" in SDK):
-                    vcversion = tuple(int(k) for k in SDK["VCTOOLSVERSION"][:5].split("."))
-                    if (vcversion < (14, 14)):
-                        cmd += " /LTCG"
-                else:
-                    cmd += " /LTCG"
+                cmd += " /LTCG"
             if HasTargetArch():
                 cmd += " /MACHINE:" + GetTargetArch().upper()
             cmd += ' /OUT:' + BracketNameWithQuotes(lib)
@@ -1634,14 +1623,7 @@ def CompileLink(dll, obj, opts):
             if (optlevel==1): cmd += " /MAP /MAPINFO:EXPORTS /NOD:MSVCRT.LIB /NOD:MSVCPRT.LIB /NOD:MSVCIRT.LIB"
             if (optlevel==2): cmd += " /MAP:NUL /NOD:MSVCRT.LIB /NOD:MSVCPRT.LIB /NOD:MSVCIRT.LIB"
             if (optlevel==3): cmd += " /MAP:NUL /NOD:MSVCRTD.LIB /NOD:MSVCPRTD.LIB /NOD:MSVCIRTD.LIB"
-            if (optlevel==4):
-                cmd += " /MAP:NUL /NOD:MSVCRTD.LIB /NOD:MSVCPRTD.LIB /NOD:MSVCIRTD.LIB"
-                if ("VCTOOLSVERSION" in SDK):
-                    vcversion = tuple(int(k) for k in SDK["VCTOOLSVERSION"][:5].split("."))
-                    if (vcversion < (14, 14)):
-                        cmd += " /LTCG"
-                else:
-                    cmd += " /LTCG"
+            if (optlevel==4): cmd += " /MAP:NUL /LTCG /NOD:MSVCRTD.LIB /NOD:MSVCPRTD.LIB /NOD:MSVCIRTD.LIB"
             if ("MFC" in opts):
                 if (optlevel<=2): cmd += " /NOD:MSVCRTD.LIB mfcs100d.lib MSVCRTD.lib"
                 else: cmd += " /NOD:MSVCRT.LIB mfcs100.lib MSVCRT.lib"

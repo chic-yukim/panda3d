@@ -1,6 +1,5 @@
 variables:
   REPO_NAME: 'panda3d'
-  BUILD_PATH: '$(Build.SourcesDirectory)/build'
 
 jobs:
 - job: Windows
@@ -9,30 +8,36 @@ jobs:
 
   strategy:
     matrix:
-      vc140-release:
+      vc140-x64-release:
+        TARGET_ARCHITECTURE: '64'
+        THIRDPARTY_PYTHOH_DIR: win-python$(PYTHON_VERSION)-x$(TARGET_ARCHITECTURE)
         BUILD_TOOLSET_VERSION: '140'
         BUILD_CONFIGURATION: 'release'
         PANDA_BUILD_OPTIMIZE: '4'
-      vc141-debug:
+      vc141-x64-debug:
+        TARGET_ARCHITECTURE: '64'
+        THIRDPARTY_PYTHOH_DIR: win-python$(PYTHON_VERSION)-x$(TARGET_ARCHITECTURE)
         BUILD_TOOLSET_VERSION: '141'
         BUILD_CONFIGURATION: 'debug'
         PANDA_BUILD_OPTIMIZE: '1'
-      vc141-release:
+      vc141-x64-release:
+        TARGET_ARCHITECTURE: '64'
+        THIRDPARTY_PYTHOH_DIR: win-python$(PYTHON_VERSION)-x$(TARGET_ARCHITECTURE)
         BUILD_TOOLSET_VERSION: '141'
         BUILD_CONFIGURATION: 'release'
         PANDA_BUILD_OPTIMIZE: '4'
 
   variables:
+    PYTHON_VERSION: '3.7'
     CMAKE_GENERATOR: 'Visual Studio 15 2017 Win64'
-    MAKEPANDA_THIRDPARTY: '$(BUILD_PATH)/panda3d-thirdparty'
 
   steps:
   # initialize
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.7'
+      versionSpec: $(PYTHON_VERSION)
       addToPath: true
-      architecture: 'x64'
+      architecture: x$(TARGET_ARCHITECTURE)
 
   # download artifacts
   - task: DownloadBuildArtifacts@0
@@ -43,22 +48,26 @@ jobs:
       pipeline: panda3d-thirdparty
       specificBuildWithTriggering: true
       downloadType: 'single'
-      artifactName: 'panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)-$(BUILD_CONFIGURATION)'
-      downloadPath: '$(BUILD_PATH)'
+      artifactName: 'panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)-x$(TARGET_ARCHITECTURE)-$(BUILD_CONFIGURATION)'
+      downloadPath: '$(Build.BinariesDirectory)'
 
   # extract artifacts
   - task: ExtractFiles@1
-    displayName: Extract panda3d-thirdparty
+    displayName: Extract thirdparty
     inputs:
-      archiveFilePatterns: '$(BUILD_PATH)/panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)-$(BUILD_CONFIGURATION)/panda3d-thirdparty.7z'
-      destinationFolder: '$(BUILD_PATH)'
+      archiveFilePatterns: '$(Build.BinariesDirectory)/panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)-x$(TARGET_ARCHITECTURE)-$(BUILD_CONFIGURATION)/thirdparty.7z'
+      destinationFolder: '$(Build.SourcesDirectory)'
       cleanDestinationFolder: false
 
   # configure & generate
   - task: CMake@1
     displayName: CMake Generate
     inputs:
-      cmakeArgs: .. -G "$(CMAKE_GENERATOR)" -Wno-dev -T "v$(BUILD_TOOLSET_VERSION),host=x64" -DCMAKE_INSTALL_PREFIX="$(Build.BinariesDirectory)/$(REPO_NAME)" -Dpanda3d_build_eigen=OFF -Dpanda3d_build_optimize=$(PANDA_BUILD_OPTIMIZE)
+      cmakeArgs: >-
+        .. -G "$(CMAKE_GENERATOR)" -Wno-dev -T "v$(BUILD_TOOLSET_VERSION),host=x64"
+        -DCMAKE_INSTALL_PREFIX="$(Build.BinariesDirectory)/$(REPO_NAME)"
+        -Dpanda3d_build_eigen=OFF
+        -Dpanda3d_build_optimize=$(PANDA_BUILD_OPTIMIZE)
 
   # build
   - task: CMake@1

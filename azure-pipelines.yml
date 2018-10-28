@@ -10,19 +10,19 @@ jobs:
     matrix:
       vc140-x64-release:
         TARGET_ARCHITECTURE: '64'
-        THIRDPARTY_PYTHOH_DIR: win-python$(PYTHON_VERSION)-x$(TARGET_ARCHITECTURE)
+        ARCHITECTURE_SUFFIX: '-x64'
         BUILD_TOOLSET_VERSION: '140'
         BUILD_CONFIGURATION: 'release'
         PANDA_BUILD_OPTIMIZE: '4'
       vc141-x64-debug:
         TARGET_ARCHITECTURE: '64'
-        THIRDPARTY_PYTHOH_DIR: win-python$(PYTHON_VERSION)-x$(TARGET_ARCHITECTURE)
+        ARCHITECTURE_SUFFIX: '-x64'
         BUILD_TOOLSET_VERSION: '141'
         BUILD_CONFIGURATION: 'debug'
         PANDA_BUILD_OPTIMIZE: '1'
       vc141-x64-release:
         TARGET_ARCHITECTURE: '64'
-        THIRDPARTY_PYTHOH_DIR: win-python$(PYTHON_VERSION)-x$(TARGET_ARCHITECTURE)
+        ARCHITECTURE_SUFFIX: '-x64'
         BUILD_TOOLSET_VERSION: '141'
         BUILD_CONFIGURATION: 'release'
         PANDA_BUILD_OPTIMIZE: '4'
@@ -48,14 +48,14 @@ jobs:
       pipeline: panda3d-thirdparty
       specificBuildWithTriggering: true
       downloadType: 'single'
-      artifactName: 'panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)-x$(TARGET_ARCHITECTURE)-$(BUILD_CONFIGURATION)'
+      artifactName: 'panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)$(ARCHITECTURE_SUFFIX)-$(BUILD_CONFIGURATION)'
       downloadPath: '$(Build.BinariesDirectory)'
 
   # extract artifacts
   - task: ExtractFiles@1
     displayName: Extract thirdparty
     inputs:
-      archiveFilePatterns: '$(Build.BinariesDirectory)/panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)-x$(TARGET_ARCHITECTURE)-$(BUILD_CONFIGURATION)/thirdparty.7z'
+      archiveFilePatterns: '$(Build.BinariesDirectory)/panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)$(ARCHITECTURE_SUFFIX)-$(BUILD_CONFIGURATION)/thirdparty.7z'
       destinationFolder: '$(Build.SourcesDirectory)'
       cleanDestinationFolder: false
 
@@ -96,4 +96,4 @@ jobs:
   # publish
   - task: PublishBuildArtifacts@1
     inputs:
-      artifactName: '$(REPO_NAME)-vc$(BUILD_TOOLSET_VERSION)-$(BUILD_CONFIGURATION)'
+      artifactName: '$(REPO_NAME)-vc$(BUILD_TOOLSET_VERSION)$(ARCHITECTURE_SUFFIX)-$(BUILD_CONFIGURATION)'

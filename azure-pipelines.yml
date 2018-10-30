@@ -47,6 +47,8 @@ jobs:
       project: rpcpp-devops
       pipeline: panda3d-thirdparty
       specificBuildWithTriggering: true
+      buildVersionToDownload: 'latestFromBranch'
+      branchName: 'refs/heads/master'
       downloadType: 'single'
       artifactName: 'panda3d-thirdparty-vc$(BUILD_TOOLSET_VERSION)$(ARCHITECTURE_SUFFIX)-$(BUILD_CONFIGURATION)'
       downloadPath: '$(Build.BinariesDirectory)'

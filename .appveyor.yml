@@ -49,8 +49,8 @@ matrix:
 install:
 # install packages
 - sh: sudo apt-get update
-- sh: sudo apt-get install --yes --no-install-recommends clang
-- sh: sudo apt-get install --yes --no-install-recommends libjpeg-dev libtiff-dev libgl1-mesa-dev libvorbis-dev libopenal-dev libharfbuzz-dev libopenexr-dev libassimp-dev
+- sh: sudo apt-get install --yes --no-install-recommends g++-8 libjpeg-dev libtiff-dev libgl1-mesa-dev libvorbis-dev libopenal-dev libharfbuzz-dev libopenexr-dev libassimp-dev
+- sh: sudo update-alternatives --set gcc /usr/bin/gcc-8
 
 - ps: mkdir $env:INSTALL_PREFIX
 - ps: pushd $env:INSTALL_PREFIX
@@ -169,8 +169,8 @@ for:
             - image: Ubuntu1804
     stack: python 3
     environment:
-        CC: /usr/bin/clang
-        CXX: /usr/bin/clang++
+        CC: /usr/bin/gcc-8
+        CXX: /usr/bin/g++-8
         CMAKE_GENERATOR: Unix Makefiles
         INSTALL_PREFIX: /home/appveyor/projects/_install
 

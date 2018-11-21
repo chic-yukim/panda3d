@@ -275,6 +275,9 @@ public:
 
   static void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam);
 
+  INLINE virtual void push_group_marker(const std::string &marker) final;
+  INLINE virtual void pop_group_marker() final;
+
   virtual void reset();
 
   virtual void prepare_display_region(DisplayRegionPipelineReader *dr);
@@ -1091,6 +1094,11 @@ public:
   GLuint _white_texture;
 
 #ifndef NDEBUG
+#ifndef OPENGLES_1
+  PFNGLPUSHGROUPMARKEREXTPROC _glPushGroupMarker;
+  PFNGLPOPGROUPMARKEREXTPROC _glPopGroupMarker;
+#endif
+
   bool _show_texture_usage;
   int _show_texture_usage_max_size;
   int _show_texture_usage_index;
@@ -1118,6 +1126,7 @@ public:
   static PStatCollector _texture_update_pcollector;
   static PStatCollector _fbo_bind_pcollector;
   static PStatCollector _check_error_pcollector;
+  static PStatCollector _check_residency_pcollector;
 
 public:
   virtual TypeHandle get_type() const {

@@ -1754,14 +1754,6 @@ reset() {
        get_extension_func("glUniform3iv");
     _glUniform4iv = (PFNGLUNIFORM4IVPROC)
        get_extension_func("glUniform4iv");
-    _glUniform1uiv = (PFNGLUNIFORM1UIVPROC)
-       get_extension_func("glUniform1uiv");
-    _glUniform2uiv = (PFNGLUNIFORM2UIVPROC)
-       get_extension_func("glUniform2uiv");
-    _glUniform3uiv = (PFNGLUNIFORM3UIVPROC)
-       get_extension_func("glUniform3uiv");
-    _glUniform4uiv = (PFNGLUNIFORM4UIVPROC)
-       get_extension_func("glUniform4uiv");
     _glUniformMatrix3fv = (PFNGLUNIFORMMATRIX3FVPROC)
        get_extension_func("glUniformMatrix3fv");
     _glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)
@@ -1776,9 +1768,35 @@ reset() {
        get_extension_func("glVertexAttribPointer");
 
     if (is_at_least_gl_version(3, 0)) {
+      _glBindFragDataLocation = (PFNGLBINDFRAGDATALOCATIONPROC)
+         get_extension_func("glBindFragDataLocation");
       _glVertexAttribIPointer = (PFNGLVERTEXATTRIBIPOINTERPROC)
          get_extension_func("glVertexAttribIPointer");
+      _glUniform1uiv = (PFNGLUNIFORM1UIVPROC)
+         get_extension_func("glUniform1uiv");
+      _glUniform2uiv = (PFNGLUNIFORM2UIVPROC)
+         get_extension_func("glUniform2uiv");
+      _glUniform3uiv = (PFNGLUNIFORM3UIVPROC)
+         get_extension_func("glUniform3uiv");
+      _glUniform4uiv = (PFNGLUNIFORM4UIVPROC)
+         get_extension_func("glUniform4uiv");
+
+    } else if (has_extension("GL_EXT_gpu_shader4")) {
+      _glBindFragDataLocation = (PFNGLBINDFRAGDATALOCATIONPROC)
+         get_extension_func("glBindFragDataLocationEXT");
+      _glVertexAttribIPointer = (PFNGLVERTEXATTRIBIPOINTERPROC)
+         get_extension_func("glVertexAttribIPointerEXT");
+      _glUniform1uiv = (PFNGLUNIFORM1UIVPROC)
+         get_extension_func("glUniform1uivEXT");
+      _glUniform2uiv = (PFNGLUNIFORM2UIVPROC)
+         get_extension_func("glUniform2uivEXT");
+      _glUniform3uiv = (PFNGLUNIFORM3UIVPROC)
+         get_extension_func("glUniform3uivEXT");
+      _glUniform4uiv = (PFNGLUNIFORM4UIVPROC)
+         get_extension_func("glUniform4uivEXT");
+
     } else {
+      _glBindFragDataLocation = nullptr;
       _glVertexAttribIPointer = nullptr;
     }
     if (is_at_least_gl_version(4, 1) ||
@@ -1807,6 +1825,7 @@ reset() {
     _glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)
        get_extension_func("glVertexAttribPointerARB");
 
+    _glBindFragDataLocation = nullptr;
     _glVertexAttribIPointer = nullptr;
     _glVertexAttribLPointer = nullptr;
   }
@@ -1857,6 +1876,13 @@ reset() {
       get_extension_func("glVertexAttribIPointer");
   } else {
     _glVertexAttribIPointer = nullptr;
+  }
+
+  if (has_extension("GL_EXT_blend_func_extended")) {
+    _glBindFragDataLocation = (PFNGLBINDFRAGDATALOCATIONPROC)
+       get_extension_func("glBindFragDataLocationEXT");
+  } else {
+    _glBindFragDataLocation = nullptr;
   }
 #endif
 
@@ -3727,6 +3753,10 @@ clear_before_callback() {
 #ifdef SUPPORT_FIXED_FUNCTION
   _glClientActiveTexture(GL_TEXTURE0);
 #endif
+
+  // It's also quite reasonable to presume there aren't any funny color write
+  // mask settings active.
+  clear_color_write_mask();
 
   // Clear the bound sampler object, so that we do not inadvertently override
   // the callback's desired sampler settings.
@@ -10662,6 +10692,20 @@ reissue_transforms() {
   memset(_vertex_attrib_columns, 0, sizeof(const GeomVertexColumn *) * 32);
 #endif
 
+  // Some libraries (Kivy) leave their buffers bound.  How clumsy of them.
+  if (_supports_buffers) {
+    _glBindBuffer(GL_ARRAY_BUFFER, 0);
+    _glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    _current_vbuffer_index = 0;
+    _current_ibuffer_index = 0;
+  }
+#ifndef OPENGLES
+  if (_supports_glsl) {
+    _glDisableVertexAttribArray(0);
+    _glDisableVertexAttribArray(1);
+  }
+#endif
+
   // Since this is called by clear_state_and_transform(), we also should reset
   // the states that won't automatically be respecified when clearing the
   // state mask.
@@ -14100,8 +14144,8 @@ extract_texture_image(PTA_uchar &image, size_t &page_size,
                       Texture::ComponentType type,
                       Texture::CompressionMode compression, int n) {
 #ifdef OPENGLES  // Extracting texture data unsupported in OpenGL ES.
-    nassertr(false, false);
-    return false;
+  nassert_raise("OpenGL ES does not support extracting texture data");
+  return false;
 #else
 
   // Make sure the GL driver does not align textures, otherwise we get corrupt

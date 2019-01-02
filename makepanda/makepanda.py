@@ -23,6 +23,7 @@ except:
     exit(1)
 
 from makepandacore import *
+from distutils.util import get_platform
 import time
 import os
 import sys
@@ -70,6 +71,8 @@ WINDOWS_SDK = None
 MSVC_VERSION = None
 BOOUSEINTELCOMPILER = False
 OPENCV_VER_23 = False
+PLATFORM = None
+COPY_PYTHON = True
 
 if "MACOSX_DEPLOYMENT_TARGET" in os.environ:
     OSXTARGET=os.environ["MACOSX_DEPLOYMENT_TARGET"]
@@ -170,6 +173,7 @@ def parseopts(args):
     global COMPRESSOR,THREADCOUNT,OSXTARGET,OSX_ARCHS,HOST_URL
     global DEBVERSION,WHLVERSION,RPMRELEASE,GIT_COMMIT,P3DSUFFIX,RTDIST_VERSION
     global STRDXSDKVERSION, WINDOWS_SDK, MSVC_VERSION, BOOUSEINTELCOMPILER
+    global COPY_PYTHON
 
     # Options for which to display a deprecation warning.
     removedopts = [
@@ -183,7 +187,7 @@ def parseopts(args):
         "version=","lzma","no-python","threads=","outputdir=","override=",
         "static","host=","debversion=","rpmrelease=","p3dsuffix=","rtdist-version=",
         "directx-sdk=", "windows-sdk=", "msvc-version=", "clean", "use-icl",
-        "universal", "target=", "arch=", "git-commit=",
+        "universal", "target=", "arch=", "git-commit=", "no-copy-python",
         ] + removedopts
 
     anything = 0
@@ -249,6 +253,7 @@ def parseopts(args):
                 MSVC_VERSION = value.strip().lower()
             elif (option=="--use-icl"): BOOUSEINTELCOMPILER = True
             elif (option=="--clean"): clean_build = True
+            elif (option=="--no-copy-python"): COPY_PYTHON = False
             elif (option[2:] in removedopts):
                 Warn("Ignoring removed option %s" % (option))
             else:
@@ -411,6 +416,67 @@ MAJOR_VERSION = '.'.join(VERSION.split('.')[:2])
 
 if P3DSUFFIX is None:
     P3DSUFFIX = MAJOR_VERSION
+
+# Now determine the distutils-style platform tag for the target system.
+target = GetTarget()
+if target == 'windows':
+    if GetTargetArch() == 'x64':
+        PLATFORM = 'win-amd64'
+    else:
+        PLATFORM = 'win32'
+
+elif target == 'darwin':
+    if OSXTARGET:
+        osxver = OSXTARGET
+    else:
+        maj, min = platform.mac_ver()[0].split('.')[:2]
+        osxver = int(maj), int(min)
+
+    arch_tag = None
+    if not OSX_ARCHS:
+        arch_tag = GetTargetArch()
+    elif len(OSX_ARCHS) == 1:
+        arch_tag = OSX_ARCHS[0]
+    elif frozenset(OSX_ARCHS) == frozenset(('i386', 'ppc')):
+        arch_tag = 'fat'
+    elif frozenset(OSX_ARCHS) == frozenset(('x86_64', 'i386')):
+        arch_tag = 'intel'
+    elif frozenset(OSX_ARCHS) == frozenset(('x86_64', 'ppc64')):
+        arch_tag = 'fat64'
+    elif frozenset(OSX_ARCHS) == frozenset(('x86_64', 'i386', 'ppc')):
+        arch_tag = 'fat32'
+    else:
+        raise RuntimeError('No arch tag for arch combination %s' % OSX_ARCHS)
+
+    PLATFORM = 'macosx-{0}.{1}-{2}'.format(osxver[0], osxver[1], arch_tag)
+
+elif target == 'linux' and (os.path.isfile("/lib/libc-2.5.so") or os.path.isfile("/lib64/libc-2.5.so")) and os.path.isdir("/opt/python"):
+    # This is manylinux1.  A bit of a sloppy check, though.
+    if GetTargetArch() in ('x86_64', 'amd64'):
+        PLATFORM = 'manylinux1-x86_64'
+    else:
+        PLATFORM = 'manylinux1-i686'
+
+elif not CrossCompiling():
+    if HasTargetArch():
+        # Replace the architecture in the platform string.
+        platform_parts = get_platform().rsplit('-', 1)
+        target_arch = GetTargetArch()
+        if target_arch == 'amd64':
+            target_arch = 'x86_64'
+        PLATFORM = platform_parts[0] + '-' + target_arch
+    else:
+        # We're not cross-compiling; just take the host arch.
+        PLATFORM = get_platform()
+
+else:
+    target_arch = GetTargetArch()
+    if target_arch == 'amd64':
+        target_arch = 'x86_64'
+    PLATFORM = '{0}-{1}' % (target, target_arch)
+
+
+print("Platform: %s" % PLATFORM)
 
 outputdir_suffix = ""
 
@@ -742,9 +808,12 @@ if (COMPILER == "MSVC"):
                 path = GetThirdpartyDir() + "vorbis/lib/{0}.lib".format(lib)
             LibName("VORBIS", path)
     if (PkgSkip("OPUS")==0):
-        LibName("OPUS", GetThirdpartyDir() + "opus/lib/libogg_static.lib")
-        LibName("OPUS", GetThirdpartyDir() + "opus/lib/libopus_static.lib")
-        LibName("OPUS", GetThirdpartyDir() + "opus/lib/libopusfile_static.lib")
+        IncDirectory("OPUS", GetThirdpartyDir() + "opus/include/opus")
+        for lib in ('ogg', 'opus', 'opusfile'):
+            path = GetThirdpartyDir() + "opus/lib/lib{0}_static.lib".format(lib)
+            if not os.path.isfile(path):
+                path = GetThirdpartyDir() + "opus/lib/{0}.lib".format(lib)
+            LibName("OPUS", path)
     for pkg in MAYAVERSIONS:
         if (PkgSkip(pkg)==0):
             LibName(pkg, '"' + SDK[pkg] + '/lib/Foundation.lib"')
@@ -901,10 +970,11 @@ if (COMPILER=="GCC"):
 
         if not PkgSkip("PYTHON"):
             python_lib = SDK["PYTHONVERSION"]
-            if not RTDIST and GetTarget() != 'android':
-                # We don't link anything in the SDK with libpython.
-                python_lib = ""
             SmartPkgEnable("PYTHON", "", python_lib, (SDK["PYTHONVERSION"], SDK["PYTHONVERSION"] + "/Python.h"))
+
+            if GetTarget() == "linux":
+                LibName("PYTHON", "-lutil")
+                LibName("PYTHON", "-lrt")
 
     SmartPkgEnable("OPENSSL",   "openssl",   ("ssl", "crypto"), ("openssl/ssl.h", "openssl/crypto.h"))
     SmartPkgEnable("ZLIB",      "zlib",      ("z"), "zlib.h")
@@ -1999,7 +2069,7 @@ def FreezePy(target, inputs, opts):
     if sys.version_info >= (2, 6):
         cmdstr += "-B "
 
-    cmdstr += os.path.join(GetOutputDir(), "direct", "showutil", "pfreeze.py")
+    cmdstr += os.path.join(GetOutputDir(), "direct", "dist", "pfreeze.py")
 
     if 'FREEZE_STARTUP' in opts:
         cmdstr += " -s"
@@ -2593,6 +2663,9 @@ def WriteConfigSettings():
         if (PkgSkip(x)): ConditionalWriteFile(GetOutputDir() + '/tmp/dtool_have_'+x.lower()+'.dat', "0\n")
         else:            ConditionalWriteFile(GetOutputDir() + '/tmp/dtool_have_'+x.lower()+'.dat', "1\n")
 
+    # Finally, write a platform.dat with the platform we are compiling for.
+    ConditionalWriteFile(GetOutputDir() + '/tmp/platform.dat', PLATFORM)
+
     # This is useful for tools like makepackage that need to know things about
     # the build parameters.
     ConditionalWriteFile(GetOutputDir() + '/tmp/optimize.dat', str(GetOptimize()))
@@ -2824,16 +2897,16 @@ __version__ = '%s'
 
 if GetTarget() == 'windows':
     p3d_init += """
-import os
+if '__file__' in locals():
+    import os
 
-bindir = os.path.join(os.path.dirname(__file__), '..', 'bin')
-if os.path.isdir(bindir):
-    if not os.environ.get('PATH'):
-        os.environ['PATH'] = bindir
-    else:
-        os.environ['PATH'] = bindir + os.pathsep + os.environ['PATH']
-
-del os, bindir
+    bindir = os.path.join(os.path.dirname(__file__), '..', 'bin')
+    if os.path.isdir(bindir):
+        if not os.environ.get('PATH'):
+            os.environ['PATH'] = bindir
+        else:
+            os.environ['PATH'] = bindir + os.pathsep + os.environ['PATH']
+    del os, bindir
 """
 
 if not PkgSkip("PYTHON"):
@@ -2910,6 +2983,36 @@ if not PkgSkip("PYTHON"):
 
 ##########################################################################################
 #
+# Write the dist-info directory.
+#
+##########################################################################################
+
+# This is just some basic stuff since setuptools just needs this file to
+# exist, otherwise it will not read the entry_points.txt file.  Maybe we will
+# eventually want to merge this with the metadata generator in makewheel.py.
+METADATA = """Metadata-Version: 2.0
+Name: Panda3D
+Version: {version}
+License: BSD
+Home-page: https://www.panda3d.org/
+Author: Panda3D Team
+Author-email: etc-panda3d@lists.andrew.cmu.edu
+"""
+
+ENTRY_POINTS = """[distutils.commands]
+build_apps = direct.dist.commands:build_apps
+bdist_apps = direct.dist.commands:bdist_apps
+"""
+
+if not PkgSkip("DIRECT"):
+    dist_dir = os.path.join(GetOutputDir(), 'panda3d.dist-info')
+    MakeDirectory(dist_dir)
+
+    ConditionalWriteFile(os.path.join(dist_dir, 'METADATA'), METADATA.format(version=VERSION))
+    ConditionalWriteFile(os.path.join(dist_dir, 'entry_points.txt'), ENTRY_POINTS)
+
+##########################################################################################
+#
 # Generate the PRC files into the ETC directory.
 #
 ##########################################################################################
@@ -2936,7 +3039,7 @@ else:
     configprc = configprc.replace("aux-display pandadx9", "")
 
 if (GetTarget() == 'darwin'):
-    configprc = configprc.replace("$XDG_CACHE_HOME/panda3d", "Library/Caches/Panda3D-%s" % MAJOR_VERSION)
+    configprc = configprc.replace("$XDG_CACHE_HOME/panda3d", "$HOME/Library/Caches/Panda3D-%s" % MAJOR_VERSION)
 
     # OpenAL is not yet working well on OSX for us, so let's do this for now.
     configprc = configprc.replace("p3openal_audio", "p3fmod_audio")
@@ -3060,7 +3163,8 @@ if tp_dir is not None:
                 CopyFile(GetOutputDir() + "/bin/", fn)
 
             # Copy the whole Python directory.
-            CopyTree(GetOutputDir() + "/python", SDK["PYTHON"])
+            if COPY_PYTHON:
+                CopyTree(GetOutputDir() + "/python", SDK["PYTHON"])
 
             # NB: Python does not always ship with the correct manifest/dll.
             # Figure out the correct one to ship, and grab it from WinSxS dir.
@@ -3069,7 +3173,7 @@ if tp_dir is not None:
                 os.unlink(manifest)
             oscmd('mt -inputresource:"%s\\python.exe";#1 -out:"%s" -nologo' % (SDK["PYTHON"], manifest), True)
 
-            if os.path.isfile(manifest):
+            if COPY_PYTHON and os.path.isfile(manifest):
                 import xml.etree.ElementTree as ET
                 tree = ET.parse(manifest)
                 idents = tree.findall('./{urn:schemas-microsoft-com:asm.v1}dependency/{urn:schemas-microsoft-com:asm.v1}dependentAssembly/{urn:schemas-microsoft-com:asm.v1}assemblyIdentity')
@@ -3099,11 +3203,12 @@ if tp_dir is not None:
                     CopyFile(GetOutputDir() + "/python/", file)
 
             # Copy python.exe to ppython.exe.
-            if not os.path.isfile(SDK["PYTHON"] + "/ppython.exe") and os.path.isfile(SDK["PYTHON"] + "/python.exe"):
-                CopyFile(GetOutputDir() + "/python/ppython.exe", SDK["PYTHON"] + "/python.exe")
-            if not os.path.isfile(SDK["PYTHON"] + "/ppythonw.exe") and os.path.isfile(SDK["PYTHON"] + "/pythonw.exe"):
-                CopyFile(GetOutputDir() + "/python/ppythonw.exe", SDK["PYTHON"] + "/pythonw.exe")
-            ConditionalWriteFile(GetOutputDir() + "/python/panda.pth", "..\n../bin\n")
+            if COPY_PYTHON:
+                if not os.path.isfile(SDK["PYTHON"] + "/ppython.exe") and os.path.isfile(SDK["PYTHON"] + "/python.exe"):
+                    CopyFile(GetOutputDir() + "/python/ppython.exe", SDK["PYTHON"] + "/python.exe")
+                if not os.path.isfile(SDK["PYTHON"] + "/ppythonw.exe") and os.path.isfile(SDK["PYTHON"] + "/pythonw.exe"):
+                    CopyFile(GetOutputDir() + "/python/ppythonw.exe", SDK["PYTHON"] + "/pythonw.exe")
+                ConditionalWriteFile(GetOutputDir() + "/python/panda.pth", "..\n../bin\n")
 
 # Copy over the MSVC runtime.
 if GetTarget() == 'windows' and "VISUALSTUDIO" in SDK:
@@ -6535,6 +6640,36 @@ if not PkgSkip("CONTRIB") and not PkgSkip("PYTHON") and not RUNTIME:
   PyTargetAdd('_rplight.pyd', input=COMMON_PANDA_LIBS)
 
 #
+# DIRECTORY: pandatool/src/deploy-stub
+#
+if PkgSkip("PYTHON") == 0:
+    OPTS=['DIR:pandatool/src/deploy-stub', 'BUILDING:DEPLOYSTUB']
+    PyTargetAdd('deploy-stub.obj', opts=OPTS, input='deploy-stub.c')
+    if GetTarget() == 'windows':
+        PyTargetAdd('frozen_dllmain.obj', opts=OPTS, input='frozen_dllmain.c')
+
+    if GetTarget() == 'linux' or GetTarget() == 'freebsd':
+        # Setup rpath so libs can be found in the same directory as the deployed game
+        LibName('DEPLOYSTUB', "-Wl,-rpath,\$ORIGIN")
+        LibName('DEPLOYSTUB', "-Wl,-z,origin")
+        LibName('DEPLOYSTUB', "-rdynamic")
+    PyTargetAdd('deploy-stub.exe', input='deploy-stub.obj')
+    if GetTarget() == 'windows':
+        PyTargetAdd('deploy-stub.exe', input='frozen_dllmain.obj')
+    PyTargetAdd('deploy-stub.exe', opts=['WINSHELL', 'DEPLOYSTUB', 'NOICON'])
+
+    if GetTarget() == 'windows':
+        PyTargetAdd('deploy-stubw.exe', input='deploy-stub.obj')
+        PyTargetAdd('deploy-stubw.exe', input='frozen_dllmain.obj')
+        PyTargetAdd('deploy-stubw.exe', opts=['SUBSYSTEM:WINDOWS', 'WINSHELL', 'DEPLOYSTUB', 'NOICON'])
+    elif GetTarget() == 'darwin':
+        DefSymbol('MACOS_APP_BUNDLE', 'MACOS_APP_BUNDLE')
+        OPTS = OPTS + ['MACOS_APP_BUNDLE']
+        PyTargetAdd('deploy-stubw.obj', opts=OPTS, input='deploy-stub.c')
+        PyTargetAdd('deploy-stubw.exe', input='deploy-stubw.obj')
+        PyTargetAdd('deploy-stubw.exe', opts=['MACOS_APP_BUNDLE', 'DEPLOYSTUB', 'NOICON'])
+
+#
 # Generate the models directory and samples directory
 #
 
@@ -6747,6 +6882,10 @@ if RUNTESTS:
         cmdstr += " --verbose"
     oscmd(cmdstr)
 
+# Write out information about the Python versions in the built dir.
+python_version_info = GetCurrentPythonVersionInfo()
+UpdatePythonVersionInfoFile(python_version_info)
+
 ##########################################################################################
 #
 # The Installers
@@ -6760,10 +6899,16 @@ if RUNTESTS:
 if INSTALLER:
     ProgressOutput(100.0, "Building installer")
     from makepackage import MakeInstaller
+
+    # When using the --installer flag, only install for the current version.
+    python_versions = []
+    if python_version_info:
+        python_versions.append(python_version_info)
+
     MakeInstaller(version=VERSION, outputdir=GetOutputDir(),
                   optimize=GetOptimize(), compressor=COMPRESSOR,
                   debversion=DEBVERSION, rpmrelease=RPMRELEASE,
-                  runtime=RUNTIME)
+                  runtime=RUNTIME, python_versions=python_versions)
 
 if WHEEL:
     ProgressOutput(100.0, "Building wheel")

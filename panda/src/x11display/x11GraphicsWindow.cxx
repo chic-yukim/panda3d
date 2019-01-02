@@ -508,23 +508,33 @@ process_events() {
     changed_properties = true;
   }
 
-  if (properties.has_foreground() && _properties.get_mouse_mode() == WindowProperties::M_confined) {
+  if (properties.has_foreground() && (
+        _properties.get_mouse_mode() == WindowProperties::M_confined ||
+        _dga_mouse_enabled)) {
+       x11GraphicsPipe *x11_pipe;
+       DCAST_INTO_V(x11_pipe, _pipe);
+
       // Focus has changed, let's let go of the pointer if we've grabbed or re-grab it if needed
       if (properties.get_foreground()) {
         // Window is going to the foreground, re-grab the pointer
         X11_Cursor cursor = None;
         if (_properties.get_cursor_hidden()) {
-            x11GraphicsPipe *x11_pipe;
-            DCAST_INTO_V(x11_pipe, _pipe);
             cursor = x11_pipe->get_hidden_cursor();
         }
 
         XGrabPointer(_display, _xwindow, True, 0, GrabModeAsync, GrabModeAsync,
                     _xwindow, cursor, CurrentTime);
+        if (_dga_mouse_enabled) {
+          x11_pipe->enable_relative_mouse();
+        }
       }
       else {
         // window is leaving the foreground, ungrab the pointer
-        XUngrabPointer(_display, CurrentTime);
+        if (_dga_mouse_enabled) {
+          x11_pipe->disable_relative_mouse();
+        } else if (_properties.get_mouse_mode() == WindowProperties::M_confined) {
+          XUngrabPointer(_display, CurrentTime);
+        }
       }
   }
 
@@ -1261,6 +1271,14 @@ set_wm_properties(const WindowProperties &properties, bool already_mapped) {
   XChangeProperty(_display, _xwindow, x11_pipe->_net_wm_pid,
                   XA_CARDINAL, 32, PropModeReplace,
                   (unsigned char *)&pid, 1);
+
+  // Disable compositing effects in fullscreen mode.
+  if (properties.has_fullscreen()) {
+    int32_t compositor = properties.get_fullscreen() ? 1 : 0;
+    XChangeProperty(_display, _xwindow, x11_pipe->_net_wm_bypass_compositor,
+                    XA_CARDINAL, 32, PropModeReplace,
+                    (unsigned char *)&compositor, 1);
+  }
 
   XChangeProperty(_display, _xwindow, x11_pipe->_net_wm_window_type,
                   XA_ATOM, 32, PropModeReplace,

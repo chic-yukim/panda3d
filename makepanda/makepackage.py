@@ -438,7 +438,8 @@ def MakeInstallerLinux(version, debversion=None, rpmrelease=1, runtime=False,
 
             # Add the binaries in /usr/bin explicitly to the spec file
             for base in os.listdir(outputdir + "/bin"):
-                txt += "/usr/bin/%s\n" % (base)
+                if not base.startswith("deploy-stub"):
+                    txt += "/usr/bin/%s\n" % (base)
 
         # Write out the spec file.
         txt = txt.replace("VERSION", version)
@@ -473,7 +474,7 @@ def MakeInstallerOSX(version, runtime=False, python_versions=[], **kwargs):
 
     dmg_name = "Panda3D-" + version
     if len(python_versions) == 1 and not python_versions[0]["version"].startswith("2."):
-        dmg_name += "-py" + pyver
+        dmg_name += "-py" + python_versions[0]["version"]
     dmg_name += ".dmg"
 
     if (os.path.isfile(dmg_name)): oscmd("rm -f %s" % dmg_name)

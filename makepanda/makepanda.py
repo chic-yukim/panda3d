@@ -2006,7 +2006,10 @@ def CompileRsrc(target, src, opts):
 
 def CompileJava(target, src, opts):
     """Compiles a .java file into a .class file."""
-    cmd = "ecj "
+    if GetHost() == 'android':
+        cmd = "ecj "
+    else:
+        cmd = "javac -bootclasspath " + BracketNameWithQuotes(SDK["ANDROID_JAR"]) + " "
 
     optlevel = GetOptimizeOption(opts)
     if optlevel >= 4:
@@ -5755,7 +5758,7 @@ if not PkgSkip("PANDATOOL") and not PkgSkip("ASSIMP"):
   TargetAdd('p3assimp_composite1.obj', opts=OPTS, input='p3assimp_composite1.cxx')
   TargetAdd('libp3assimp.dll', input='p3assimp_composite1.obj')
   TargetAdd('libp3assimp.dll', input=COMMON_PANDA_LIBS)
-  TargetAdd('libp3assimp.dll', opts=OPTS+['ZLIB'])
+  TargetAdd('libp3assimp.dll', opts=OPTS+['ZLIB', 'ADVAPI'])
 
 #
 # DIRECTORY: pandatool/src/daeprogs/

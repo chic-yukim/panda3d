@@ -22,8 +22,8 @@ set(panda3d_build_outputdir_path "${PROJECT_SOURCE_DIR}/${panda3d_build_outputdi
 if(WIN32)
     set(panda3d_thirdparty_base "" CACHE PATH "The path of thirdparty")
 endif()
-set(panda3d_build_threads "${process_count}" CACHE STRINGS "The number of threads")
-set(panda3d_build_optimize "4" CACHE STRINGS "Optimization level (1-4)")
+set(panda3d_build_threads "${process_count}" CACHE STRING "The number of threads")
+set(panda3d_build_optimize "4" CACHE STRING "Optimization level (1-4)")
 option(panda3d_build_verbose "Verbose" OFF)
 
 # package options
@@ -93,8 +93,11 @@ if(${panda3d_build_verbose})
 endif()
 
 if(WIN32)
-    if(MSVC_VERSION GREATER_EQUAL 1920)
+    if(MSVC_VERSION GREATER_EQUAL 1930)
         message(FATAL_ERROR "Unknown Visual Studio.")
+    elseif(MSVC_VERSION GREATER_EQUAL 1920)    # vs2019
+        set(panda3d_build_msvc_version "14.2")
+        set(panda3d_build_default_windows_sdk "10.0")
     elseif(MSVC_VERSION GREATER_EQUAL 1910)    # vs2017
         set(panda3d_build_msvc_version "14.1")
         set(panda3d_build_default_windows_sdk "10.0")
@@ -113,7 +116,7 @@ if(WIN32)
     else()
         message(FATAL_ERROR "Unsupported Visual Studio.")
     endif()
-    set(panda3d_build_windows_sdk ${panda3d_build_default_windows_sdk} CACHE "Windows SDK version" STRINGS)
+    set(panda3d_build_windows_sdk ${panda3d_build_default_windows_sdk} CACHE STRING "Windows SDK version")
 
     set(panda3d_build_command ${panda3d_build_command}
         --msvc-version=${panda3d_build_msvc_version}

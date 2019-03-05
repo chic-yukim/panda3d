@@ -157,7 +157,7 @@ def usage(problem):
     print("  --everything      (enable every third-party lib)")
     print("  --directx-sdk=X   (specify version of DirectX SDK to use: jun2010, aug2009, mar2009, aug2006)")
     print("  --windows-sdk=X   (specify Windows SDK version, eg. 7.0, 7.1 or 10.  Default is 7.1)")
-    print("  --msvc-version=X  (specify Visual C++ version, eg. 10, 11, 12, 14.  Default is 14)")
+    print("  --msvc-version=X  (specify Visual C++ version, eg. 10, 11, 12, 14, 14.1, 14.2.  Default is 14)")
     print("  --use-icl         (experimental setting to use an intel compiler instead of MSVC on Windows)")
     print("")
     print("The simplest way to compile panda is to just type:")
@@ -863,13 +863,14 @@ if (COMPILER=="GCC"):
     fcollada_libs = ("FColladaD", "FColladaSD", "FColladaS")
     # WARNING! The order of the ffmpeg libraries matters!
     ffmpeg_libs = ("libavformat", "libavcodec", "libavutil")
+    assimp_libs = ("libassimp", "libassimpd")
 
     #         Name         pkg-config   libs, include(dir)s
     if (not RUNTIME):
         SmartPkgEnable("EIGEN",     "eigen3",    (), ("Eigen/Dense",), target_pkg = 'ALWAYS')
         SmartPkgEnable("ARTOOLKIT", "",          ("AR"), "AR/ar.h")
         SmartPkgEnable("FCOLLADA",  "",          ChooseLib(fcollada_libs, "FCOLLADA"), ("FCollada", "FCollada/FCollada.h"))
-        SmartPkgEnable("ASSIMP",    "assimp",    ("assimp"), "assimp/Importer.hpp")
+        SmartPkgEnable("ASSIMP",    "assimp",    ChooseLib(assimp_libs, "ASSIMP"), "assimp/Importer.hpp")
         SmartPkgEnable("FFMPEG",    ffmpeg_libs, ffmpeg_libs, ("libavformat/avformat.h", "libavcodec/avcodec.h", "libavutil/avutil.h"))
         SmartPkgEnable("SWSCALE",   "libswscale", "libswscale", ("libswscale/swscale.h"), target_pkg = "FFMPEG", thirdparty_dir = "ffmpeg")
         SmartPkgEnable("SWRESAMPLE","libswresample", "libswresample", ("libswresample/swresample.h"), target_pkg = "FFMPEG", thirdparty_dir = "ffmpeg")

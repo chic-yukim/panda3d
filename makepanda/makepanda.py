@@ -683,6 +683,9 @@ if (COMPILER == "MSVC"):
         IncDirectory("FCOLLADA", GetThirdpartyDir() + "fcollada/include/FCollada")
     if (PkgSkip("ASSIMP")==0):
         LibName("ASSIMP", GetThirdpartyDir() + "assimp/lib/assimp.lib")
+        path = GetThirdpartyDir() + "assimp/lib/IrrXML.lib"
+        if os.path.isfile(path):
+            LibName("ASSIMP", GetThirdpartyDir() + "assimp/lib/IrrXML.lib")
         IncDirectory("ASSIMP", GetThirdpartyDir() + "assimp/include/assimp")
     if (PkgSkip("SQUISH")==0):
         if GetOptimize() <= 2:
@@ -5775,7 +5778,7 @@ if not PkgSkip("PANDATOOL") and not PkgSkip("ASSIMP"):
   TargetAdd('p3assimp_composite1.obj', opts=OPTS, input='p3assimp_composite1.cxx')
   TargetAdd('libp3assimp.dll', input='p3assimp_composite1.obj')
   TargetAdd('libp3assimp.dll', input=COMMON_PANDA_LIBS)
-  TargetAdd('libp3assimp.dll', opts=OPTS+['ZLIB'])
+  TargetAdd('libp3assimp.dll', opts=OPTS+['ZLIB', 'ADVAPI'])
 
 #
 # DIRECTORY: pandatool/src/daeprogs/
